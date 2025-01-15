@@ -93,3 +93,7 @@ alembic upgrade head
 ├── README.md
 └── run-project.sh
 ```
+
+## postman collection documentation
+
+* [postman collection documentation](https://documenter.getpostman.com/view/9920489/2sAYQZGBNJ)

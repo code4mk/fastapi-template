@@ -15,9 +15,10 @@ load_dotenv()
 def create_application():
     application = FastAPI()
 
-    # Setup validation exception handler
+    # Setup global exception handler
     setup_exception_handlers(application)
 
+    # Setup authorization middleware
     application.add_middleware(AuthorizationMiddleware)
     
     # Include the root index and health router
