@@ -2,7 +2,10 @@
 
 ## Setup project
 ```bash
+# Activate virtual environment
 pipenv shell
+
+# Install dependencies
 pipenv install
 ```
 
@@ -84,15 +87,21 @@ alembic upgrade head
 │   │   └── validation.py
 │   ├── __init__.py
 │   └── main.py
-├── alembic/
+├── alembic/*
+├── docker/*
+├── alembic.ini
 ├── .env
 ├── .env.example
 ├── .gitignore
+├── build.sh
 ├── Pipfile
 ├── Pipfile.lock
 ├── README.md
 └── run-project.sh
 ```
+
+> [!NOTE]  
+> This project needs python 3.12 or higher
 
 ## postman collection documentation
 
