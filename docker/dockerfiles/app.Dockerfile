@@ -1,5 +1,9 @@
-# Use the official Python 3.11.6 (slim) image
-FROM python:3.11.6-slim
+# Use build argument to set Python version, default is 3.12-slim
+ARG PYTHON_VERSION=3.12-slim
+
+# Base image with configurable Python version
+FROM python:${PYTHON_VERSION}
+
 
 # Set environment variables
 ENV PYTHONDONTWRITEBYTECODE 1
