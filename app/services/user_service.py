@@ -39,10 +39,13 @@ class UserService:
         }
       
     async def s_get_users(self, request):
-        users = self.db.query(User)
-        users = the_sorting(request, users)
+        query = self.db.query(User)
+
+        #TODO: add logic here if you want to filter users
+
+        query = the_sorting(request, query)
         
-        return paginate(request, users, serilizer=UserSerializer, wrap='users')
+        return paginate(request, query, serilizer=UserSerializer, wrap='users')
       
     async def s_get_user_by_id(self, request: Request, user_id):
         user = self.db.query(User).filter(User.id == user_id).first()

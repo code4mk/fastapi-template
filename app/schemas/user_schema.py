@@ -1,4 +1,4 @@
-from pydantic import BaseModel, EmailStr
+from pydantic import BaseModel, EmailStr, field_validator
 from typing import Optional
 import uuid
 
@@ -7,6 +7,12 @@ class UserCreateSchema(BaseModel):
     name: Optional[str] = None
     email: EmailStr
     password: str
+
+    @field_validator('password')
+    def validate_password(cls, v):
+        if len(v) < 8:
+            raise ValueError("Password must be at least 8 characters long")
+        return v
 
 
 # Pydantic model for updating user data

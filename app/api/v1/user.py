@@ -22,7 +22,7 @@ async def registration(request: Request):
     data = UserCreateSchema(**request_data)
     
     output = await user_service.s_registration(request, data)
-    return JSONResponse(content=output, status_code=status.HTTP_200_OK)
+    return JSONResponse(content=output, status_code=status.HTTP_201_CREATED)
 
 @router.post("/users/login")
 async def login(request: Request):
