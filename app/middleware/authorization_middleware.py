@@ -5,6 +5,7 @@ from jose import JWTError, jwt
 from typing import Optional
 from app.utils.jwt_utils import decode_token
 from app.config.authorization import EXCLUDE_PATHS
+from app.utils.exceptions import UnauthorizedException
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
@@ -14,17 +15,17 @@ class AuthorizationMiddleware(BaseHTTPMiddleware):
     def verify_access_token(self, request) -> Optional[dict]:
         auth_header = request.headers.get("Authorization")
         if not auth_header:
-            raise HTTPException(status_code=401, detail="No authorization header")
+            raise UnauthorizedException(message="No authorization header")
 
         try:
             scheme, token = auth_header.split()
             if scheme.lower() != "bearer":
-                raise HTTPException(status_code=401, detail="Invalid authentication scheme")
+                raise UnauthorizedException(message="Invalid authentication scheme")
             
             return decode_token(token)
             
         except JWTError:
-            raise HTTPException(status_code=401, detail="Invalid token")
+            raise UnauthorizedException(message="Invalid token")
 
     async def dispatch(self, request, call_next):
         try:

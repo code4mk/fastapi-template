@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, root_index
 from app.config.cors import CORS_CONFIG
-from app.utils.validation import setup_validation_exception_handler
+from app.utils.global_exception_handler import setup_exception_handlers
 from app.middleware.authorization_middleware import AuthorizationMiddleware
 
 from app.api.v1 import user
@@ -16,7 +16,7 @@ def create_application():
     application = FastAPI()
 
     # Setup validation exception handler
-    setup_validation_exception_handler(application)
+    setup_exception_handlers(application)
 
     application.add_middleware(AuthorizationMiddleware)
     

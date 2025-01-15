@@ -8,17 +8,18 @@ from app.serializers.user_serializer import UserSerializer, UserLoginSerializer
 from app.utils.password import compare_hashed_password, generate_password_hash
 from app.utils.jwt_utils import create_access_token, create_refresh_token
 from app.utils.base import the_query
+from app.utils.exceptions import UnauthorizedException, BaseAPIException, ItemNotFoundException
 
 
 class UserService:
     def __init__(self):
         self.db = get_db()
         
-    def s_registration(self, request: Request, data: UserCreateSchema):
+    async def s_registration(self, request: Request, data: UserCreateSchema):
         db_user = self.db.query(User).filter(User.email == data.email).first()
         
         if db_user:
-            raise HTTPException(status_code=400, detail="Email already registered")
+            raise BaseAPIException(message="Email already registered", status_code=400)
         
         new_user = User()
         new_user.email = data.email
@@ -37,16 +38,16 @@ class UserService:
             "user": user_data.model_dump()
         }
       
-    def s_get_users(self, request):
+    async def s_get_users(self, request):
         users = self.db.query(User)
         users = the_sorting(request, users)
         
         return paginate(request, users, serilizer=UserSerializer, wrap='users')
       
-    def s_get_user_by_id(self, request: Request, user_id):
+    async def s_get_user_by_id(self, request: Request, user_id):
         user = self.db.query(User).filter(User.id == user_id).first()
         if user is None:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise ItemNotFoundException(message="User not found")
         return user
 
     async def s_login(self, request: Request):
@@ -58,17 +59,11 @@ class UserService:
         # Find user by email
         user = self.db.query(User).filter(User.email == email).first()
         if not user:
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid credentials"
-            )
+            raise UnauthorizedException(message="Invalid credentials")
         
         # Verify password
         if not compare_hashed_password(password, user.password):
-            raise HTTPException(
-                status_code=401,
-                detail="Invalid credentials"
-            )
+            raise UnauthorizedException(message="Invalid credentials")
         
         # Create token payload
         token_payload = {
@@ -98,7 +93,7 @@ class UserService:
         user = self.db.query(User).filter(User.id == user_id).first()
 
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise ItemNotFoundException(message="User not found")
 
         if the_data.get('name'):
             user.name = the_data.get('name')
@@ -118,7 +113,7 @@ class UserService:
     async def s_delete_user(self, request: Request, user_id):
         user = self.db.query(User).filter(User.id == user_id).first()
         if not user:
-            raise HTTPException(status_code=404, detail="User not found")
+            raise ItemNotFoundException(message="User not found")
         self.db.delete(user)
         self.db.commit()
         return {"message": "User deleted successfully"}

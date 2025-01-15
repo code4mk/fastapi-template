@@ -21,7 +21,7 @@ async def registration(request: Request):
     request_data = await the_query(request)
     data = UserCreateSchema(**request_data)
     
-    output = user_service.s_registration(request, data)
+    output = await user_service.s_registration(request, data)
     return JSONResponse(content=output, status_code=status.HTTP_200_OK)
 
 @router.post("/users/login")
