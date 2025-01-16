@@ -78,4 +78,12 @@ class ConflictException(BaseAPIException):
         super().__init__(
             message=message,
             status_code=409
-        ) 
+        )
+
+class MethodNotAllowedException(BaseAPIException):
+    """Method not allowed exception"""
+    def __init__(self, message: str = "Method not allowed"):
+        super().__init__(
+            message=message,
+            status_code=405
+        )
