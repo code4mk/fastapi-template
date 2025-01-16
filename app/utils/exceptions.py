@@ -33,9 +33,9 @@ class ValidationException(BaseAPIException):
 
 class NotFoundException(BaseAPIException):
     """Resource not found exception"""
-    def __init__(self, resource: str = "Resource"):
+    def __init__(self, message: str = "Resource not found"):
         super().__init__(
-            message=f"{resource} not found",
+            message=message,
             status_code=404
         )
 
