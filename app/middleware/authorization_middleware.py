@@ -5,7 +5,7 @@ from jose import JWTError, jwt
 from typing import Optional
 from app.utils.jwt_utils import decode_token
 from app.config.authorization import EXCLUDE_PATHS
-from app.utils.exceptions import UnauthorizedException
+from fastapi_pundra.rest.exceptions import UnauthorizedException
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
@@ -30,7 +30,8 @@ class AuthorizationMiddleware(BaseHTTPMiddleware):
     async def dispatch(self, request, call_next):
         try:
             # Skip token verification for certain paths (optional)
-            if request.url.path in EXCLUDE_PATHS:
+            request_path = request.url.path.rstrip('/')  # Remove trailing slash if present
+            if any(request_path == excluded.rstrip('/') for excluded in EXCLUDE_PATHS):
                 return await call_next(request)
 
             # Verify the token and get payload

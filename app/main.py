@@ -4,7 +4,7 @@ from dotenv import load_dotenv
 from fastapi.middleware.cors import CORSMiddleware
 from app.api import health, root_index
 from app.config.cors import CORS_CONFIG
-from app.utils.global_exception_handler import setup_exception_handlers
+from fastapi_pundra.rest.global_exception_handler import setup_exception_handlers
 from app.middleware.authorization_middleware import AuthorizationMiddleware
 
 from app.api.v1 import user

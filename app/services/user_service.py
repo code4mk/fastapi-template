@@ -1,14 +1,13 @@
 from fastapi import HTTPException, Request
 from app.database.database import get_db
-from app.utils.base import the_sorting
-from app.utils.paginate import paginate
+from fastapi_pundra.rest.paginate import paginate
 from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
 from app.serializers.user_serializer import UserSerializer, UserLoginSerializer
 from app.utils.password import compare_hashed_password, generate_password_hash
 from app.utils.jwt_utils import create_access_token, create_refresh_token
-from app.utils.base import the_query
-from app.utils.exceptions import UnauthorizedException, BaseAPIException, ItemNotFoundException
+from fastapi_pundra.rest.helpers import the_query, the_sorting
+from fastapi_pundra.rest.exceptions import UnauthorizedException, BaseAPIException, ItemNotFoundException
 
 
 class UserService:
@@ -44,8 +43,16 @@ class UserService:
         #TODO: add logic here if you want to filter users
 
         query = the_sorting(request, query)
+
+        def additional_data(data):
+            total_active_users = len([user for user in data if user.status == 'active'])
+            total_inactive_users = len([user for user in data if user.status == 'inactive'])
+            return {
+                "active_users": total_active_users,
+                "inactive_users": total_inactive_users
+            }
         
-        return paginate(request, query, serilizer=UserSerializer, wrap='users')
+        return paginate(request, query, serilizer=UserSerializer, wrap='users', additional_data=additional_data)
       
     async def s_get_user_by_id(self, request: Request, user_id):
         user = self.db.query(User).filter(User.id == user_id).first()

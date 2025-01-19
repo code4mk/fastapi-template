@@ -4,13 +4,17 @@ verify_ssl = true
 name = "pypi"
 
 [packages]
-fastapi = {extras = ["standard"], version = "*"}
+fastapi = {extras = ["standard"] }
 sqlalchemy = "*"
 psycopg2-binary = "*"
 python-jose = "*"
 bcrypt = "*"
 alembic = "*"
 fastapi-mail = "*"
+setuptools = "*"
+twine = "*"
+wheel = "*"
+fastapi-pundra = "==0.0.5"
 
 [dev-packages]
 

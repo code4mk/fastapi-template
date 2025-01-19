@@ -1,10 +1,11 @@
 from fastapi import APIRouter, Request, status
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from app.utils.base import the_query
 from app.services.user_service import UserService
 from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
-from app.utils.validation import dto
+from fastapi_pundra.rest.validation import dto
+from fastapi_pundra.rest.helpers import the_query
+
 
 # Create a api router
 router = APIRouter()
