@@ -1,7 +1,7 @@
 {
     "_meta": {
         "hash": {
-            "sha256": "de0f3f30a3fbacec6822256ba8d4c9e79f0c2a66565b02119bd12e38af994440"
+            "sha256": "218238c21a3e8cdd99d7f0acdc9871b50cef1df609c07b0f1fdc6f7c2c894526"
         },
         "pipfile-spec": 6,
         "requires": {
@@ -266,13 +266,9 @@
             "version": "==1.4.2"
         },
         "fastapi-pundra": {
-            "hashes": [
-                "sha256:71eeaff5545e5115cc4ef71617e2110d472a564dc470e774b82c2da0198ab6c9",
-                "sha256:aaf598b5b4f784b08202fc2baddcded28a675f95fe2779b09b948c910dbc8871"
-            ],
-            "index": "pypi",
-            "markers": "python_version >= '3.6'",
-            "version": "==0.0.5"
+            "editable": true,
+            "file": "fastapi-pundra",
+            "markers": "python_version >= '3.6'"
         },
         "h11": {
             "hashes": [

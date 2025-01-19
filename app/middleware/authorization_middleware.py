@@ -3,8 +3,8 @@ from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
 from jose import JWTError, jwt
 from typing import Optional
-from app.utils.jwt_utils import decode_token
 from app.config.authorization import EXCLUDE_PATHS
+from fastapi_pundra.common.jwt_utils import decode_token
 from fastapi_pundra.rest.exceptions import UnauthorizedException
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):

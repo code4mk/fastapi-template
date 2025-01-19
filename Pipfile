@@ -14,7 +14,7 @@ fastapi-mail = "*"
 setuptools = "*"
 twine = "*"
 wheel = "*"
-fastapi-pundra = "==0.0.5"
+fastapi-pundra = {file = "fastapi-pundra", editable = true}
 
 [dev-packages]
 

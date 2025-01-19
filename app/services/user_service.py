@@ -4,8 +4,8 @@ from fastapi_pundra.rest.paginate import paginate
 from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
 from app.serializers.user_serializer import UserSerializer, UserLoginSerializer
-from app.utils.password import compare_hashed_password, generate_password_hash
-from app.utils.jwt_utils import create_access_token, create_refresh_token
+from fastapi_pundra.common.password import compare_hashed_password, generate_password_hash
+from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
 from fastapi_pundra.rest.helpers import the_query, the_sorting
 from fastapi_pundra.rest.exceptions import UnauthorizedException, BaseAPIException, ItemNotFoundException
 
