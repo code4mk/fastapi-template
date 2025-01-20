@@ -1,4 +1,4 @@
-from fastapi import HTTPException, Request
+from fastapi import HTTPException, Request, BackgroundTasks
 from app.database.database import get_db
 from fastapi_pundra.rest.paginate import paginate
 from app.models.users import User
@@ -8,14 +8,14 @@ from fastapi_pundra.common.password import compare_hashed_password, generate_pas
 from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
 from fastapi_pundra.rest.helpers import the_query, the_sorting
 from fastapi_pundra.rest.exceptions import UnauthorizedException, BaseAPIException, ItemNotFoundException
-from fastapi_pundra.common.mailer.mail import send_mail
+from fastapi_pundra.common.mailer.mail import send_mail_background
 
 
 class UserService:
     def __init__(self):
         self.db = get_db()
         
-    async def s_registration(self, request: Request, data: UserCreateSchema):
+    async def s_registration(self, request: Request, data: UserCreateSchema, background_tasks: BackgroundTasks):
         db_user = self.db.query(User).filter(User.email == data.email).first()
         
         if db_user:
@@ -33,23 +33,20 @@ class UserService:
 
         user_data = UserSerializer(**new_user.as_dict())
 
-        # Send welcome email
-        try: 
-            template_name = "welcome_email.html"
-            context = {
-                "name": new_user.name or new_user.email,
-                "activation_link": f"{request.base_url}api/v1/users/activate"
-            }
-            await send_mail(
-                subject=f"Welcome, {new_user.name or new_user.email}!",
-                to=[new_user.email], 
-                template_name=template_name, 
-                context=context
-            )
-        except Exception as e:
-            # Log the error but don't prevent user registration
-            print(f"Failed to send welcome email: {str(e)}")
-            # You might want to log this to your logging system instead of print
+        # Send welcome email in background
+        template_name = "welcome_email.html"
+        context = {
+            "name": new_user.name or new_user.email,
+            "activation_link": f"{request.base_url}api/v1/users/activate"
+        }
+        
+        await send_mail_background(
+            background_tasks=background_tasks,
+            subject=f"Welcome, {new_user.name or new_user.email}!",
+            to=[new_user.email],
+            template_name=template_name,
+            context=context
+        )
 
         return {
             "message": "Registration successful",

@@ -1,4 +1,4 @@
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
 from app.services.user_service import UserService
@@ -16,13 +16,13 @@ user_service = UserService()
 # Registration route
 @router.post("/users/registration")
 @dto(UserCreateSchema)
-async def registration(request: Request):
+async def registration(request: Request, background_tasks: BackgroundTasks):
     
     # Retrieve data from the request
     request_data = await the_query(request)
     data = UserCreateSchema(**request_data)
     
-    output = await user_service.s_registration(request, data)
+    output = await user_service.s_registration(request, data, background_tasks)
     return JSONResponse(content=output, status_code=status.HTTP_201_CREATED)
 
 @router.post("/users/login")
