@@ -15,6 +15,8 @@ setuptools = "*"
 twine = "*"
 wheel = "*"
 fastapi-pundra = {file = "fastapi-pundra", editable = true}
+beautifulsoup4 = "*"
+premailer = "*"
 
 [dev-packages]
 
