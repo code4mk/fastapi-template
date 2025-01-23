@@ -14,9 +14,10 @@ fastapi-mail = "*"
 setuptools = "*"
 twine = "*"
 wheel = "*"
-fastapi-pundra = {file = "fastapi-pundra", editable = true}
 beautifulsoup4 = "*"
 premailer = "*"
+celery-redbeat = "*"
+fastapi-pundra = "==0.0.7"
 
 [dev-packages]
 
