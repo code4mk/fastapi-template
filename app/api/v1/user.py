@@ -1,10 +1,11 @@
-from fastapi import APIRouter, Request, status
+from fastapi import APIRouter, Request, status, BackgroundTasks
 from fastapi.responses import JSONResponse
 from fastapi.encoders import jsonable_encoder
-from app.utils.base import the_query
 from app.services.user_service import UserService
 from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
-from app.utils.validation import dto
+from fastapi_pundra.rest.validation import dto
+from fastapi_pundra.rest.helpers import the_query
+
 
 # Create a api router
 router = APIRouter()
@@ -15,13 +16,13 @@ user_service = UserService()
 # Registration route
 @router.post("/users/registration")
 @dto(UserCreateSchema)
-async def registration(request: Request):
+async def registration(request: Request, background_tasks: BackgroundTasks):
     
     # Retrieve data from the request
     request_data = await the_query(request)
     data = UserCreateSchema(**request_data)
     
-    output = await user_service.s_registration(request, data)
+    output = await user_service.s_registration(request, data, background_tasks)
     return JSONResponse(content=output, status_code=status.HTTP_201_CREATED)
 
 @router.post("/users/login")

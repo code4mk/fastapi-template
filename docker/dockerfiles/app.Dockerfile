@@ -4,44 +4,47 @@ ARG PYTHON_VERSION=3.12-slim
 # Base image with configurable Python version
 FROM python:${PYTHON_VERSION}
 
-
-# Set environment variables
+# Prevent Python from writing pyc files to save disk space
 ENV PYTHONDONTWRITEBYTECODE 1
+# Ensure Python outputs everything that's printed inside it without buffering
 ENV PYTHONUNBUFFERED 1
+# Ignore pipenv warnings about being root user
+ENV PIP_ROOT_USER_ACTION ignore
 
-# Update the package list and install necessary packages
-RUN apt-get update && \
-    apt-get -y install supervisor
+# Update package lists and install supervisor and nginx without recommended packages to keep the image slim
+RUN apt-get update && apt-get upgrade -y && \
+    DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
+    supervisor \
+    nginx \
+    && rm -rf /var/lib/apt/lists/*
 
-RUN apt-get update && \
-    apt-get -y install nginx
+# Copy nginx configuration file to the appropriate directory
+COPY docker/config/nginx/app.conf /etc/nginx/sites-enabled/app.conf
 
-# RUN apt-get update && \
-#     apt-get -y install gcc
+# Copy supervisor configuration file to the appropriate directory
+COPY docker/config/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
 
-# Copy Nginx configuration to the container
-COPY ./docker/config/nginx/app.conf /etc/nginx/sites-enabled/app.conf
-
-# Copy Supervisor configuration to the container
-COPY ./docker/config/supervisor/supervisord.conf /etc/supervisor/conf.d/supervisord.conf
-
-# Create the log and run directories for supervisord
+# Create necessary directories for supervisor logs and runtime files
 RUN mkdir -p /var/log/supervisord /var/run/supervisord
 
-# Set the working directory
+# Set the working directory for subsequent commands
 WORKDIR /var/www/app
 
-# Copy requirements.txt and Pipfile.lock to the container
-COPY Pipfile.lock /var/www/app/
+# Copy Pipfile and Pipfile.lock to the working directory
+COPY Pipfile .
+COPY Pipfile.lock .
 
-# Install project dependencies using pip and pipenv
-RUN pip install pipenv
-RUN pipenv install --ignore-pipfile --verbose
+# Install pipenv using Python's package manager
+RUN python3 -m pip install pipenv
 
-# Copy the rest of your project files to the container
+# Install Python dependencies defined in Pipfile.lock using pipenv
+RUN pipenv install --ignore-pipfile
+
+# Copy the entire application code to the working directory
 COPY . .
 
-# Expose the port if your Django project uses it
+# Expose port 8000 for the application
 EXPOSE 8000
 
+# Command to start supervisor with the specified configuration file, running in the foreground
 CMD supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
