@@ -1,11 +1,12 @@
-from fastapi import HTTPException
 from fastapi.responses import JSONResponse
 from starlette.middleware.base import BaseHTTPMiddleware
-from jose import JWTError, jwt
+from jose import JWTError
 from typing import Optional
-from app.config.authorization import EXCLUDE_PATHS
 from fastapi_pundra.common.jwt_utils import decode_token
 from fastapi_pundra.rest.exceptions import UnauthorizedException
+from datetime import datetime
+from app.config.authorization import EXCLUDE_PATHS
+
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):
     def __init__(self, app):
@@ -46,7 +47,13 @@ class AuthorizationMiddleware(BaseHTTPMiddleware):
             response = await call_next(request)
             return response
             
-        except HTTPException as exc:
-            return JSONResponse(content={"detail": exc.detail}, status_code=exc.status_code)
         except Exception as exc:
-            return JSONResponse(content={"detail": f"Error: {str(exc)}"}, status_code=500)
+            error_response = exc.to_dict()
+            error_response["path"] = request.url.path
+            error_response["type"] = exc.__class__.__name__
+            error_response["timestamp"] = datetime.now().isoformat()
+            
+            return JSONResponse(
+                content=error_response,
+                status_code=exc.status_code
+            )
