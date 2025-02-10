@@ -1,6 +1,6 @@
-from __future__ import annotations
+from collections.abc import Callable, Awaitable
 from datetime import datetime, UTC
-from fastapi import FastAPI, Request, Response, Callable, Awaitable
+from fastapi import FastAPI, Request, Response
 from fastapi.responses import JSONResponse
 from fastapi_pundra.common.jwt_utils import decode_token
 from fastapi_pundra.rest.exceptions import UnauthorizedException

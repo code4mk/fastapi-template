@@ -50,7 +50,8 @@ ignore = [
     "TD002",  # Missing author in TODO
     "TD003",  # Missing issue link in TODO
     "FIX002",  # Line contains TODO, consider resolving the issue
-    "COM812"  # Missing trailing comma in Python 3.6+
+    "COM812",  # Missing trailing comma in Python 3.6+
+    "N805",    # Instance method first argument name should be 'self'
 ]
 
 # Allow unused variables when underscore-prefixed
