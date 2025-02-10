@@ -17,9 +17,15 @@ wheel = "*"
 beautifulsoup4 = "*"
 premailer = "*"
 celery-redbeat = "*"
-fastapi-pundra = "==0.0.7"
+fastapi-pundra = "==0.0.11"
 
 [dev-packages]
+pytest = "*"
+pytest-asyncio = "*"
+pytest-cov = "*"
+factory-boy = "*"
+httpx = "*"
+ruff = "*"
 
 [requires]
 python_version = "3.12"
