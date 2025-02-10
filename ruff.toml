@@ -49,7 +49,8 @@ ignore = [
     "ARG002",
     "TD002",
     "TD003",
-    "FIX002"
+    "FIX002",
+    "COM812"
 ]
 
 # Allow unused variables when underscore-prefixed
