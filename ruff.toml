@@ -1,5 +1,6 @@
 # Line length configuration
 line-length = 100
+indent-width = 4
 
 # Assume Python 3.12+
 target-version = "py312"
@@ -57,6 +58,10 @@ dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
 # Allow fix for all enabled rules
 fixable = ["ALL"]
 unfixable = []
+
+[format]
+quote-style = "double"
+indent-style = "space"
 
 [lint.per-file-ignores]
 "__init__.py" = ["F401"]  # Ignore unused imports in __init__.py files

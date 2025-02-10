@@ -24,7 +24,10 @@ class UserService:
         self.db = get_db()
 
     async def s_registration(
-        self, request: Request, data: UserCreateSchema, background_tasks: BackgroundTasks,
+        self,
+        request: Request,
+        data: UserCreateSchema,
+        background_tasks: BackgroundTasks,
     ) -> dict:
         """Register a new user."""
         db_user = self.db.query(User).filter(User.email == data.email).first()
@@ -75,7 +78,11 @@ class UserService:
             return {"active_users": total_active_users, "inactive_users": total_inactive_users}
 
         return paginate(
-            request, query, serilizer=UserSerializer, wrap="users", additional_data=additional_data,
+            request,
+            query,
+            serilizer=UserSerializer,
+            wrap="users",
+            additional_data=additional_data,
         )
 
     async def s_get_user_by_id(self, request: Request, user_id: str) -> User:

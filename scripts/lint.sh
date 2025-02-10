@@ -1,2 +1,2 @@
 #!/bin/bash
-ruff check . --fix
+ruff check . --fix --preview

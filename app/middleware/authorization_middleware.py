@@ -34,7 +34,9 @@ class AuthorizationMiddleware(BaseHTTPMiddleware):
             raise UnauthorizedException(message="Invalid token") from err
 
     async def dispatch(
-        self, request: Request, call_next: Callable[[Request], Awaitable[Response]],
+        self,
+        request: Request,
+        call_next: Callable[[Request], Awaitable[Response]],
     ) -> Response:
         """Dispatch the middleware."""
         try:

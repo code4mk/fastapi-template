@@ -37,4 +37,3 @@ class UserLoginSchema(BaseModel):
     id: str
     name: str
     email: EmailStr
-
