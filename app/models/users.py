@@ -1,11 +1,15 @@
-from sqlalchemy import Column, String, DateTime
+import uuid
+
+from sqlalchemy import Column, DateTime, String
 from sqlalchemy.dialects.postgresql import UUID
 from sqlalchemy.sql import func
-import uuid
+
 from app.database.database import Base
 
 
 class User(Base):
+    """SQLAlchemy model for the users table."""
+
     __tablename__ = "users"
 
     id = Column(UUID(as_uuid=True), primary_key=True, index=True, default=uuid.uuid4)
@@ -16,6 +20,7 @@ class User(Base):
     created_at = Column(DateTime(timezone=True), server_default=func.now())
     updated_at = Column(DateTime(timezone=True), server_default=func.now(), onupdate=func.now())
     deleted_at = Column(DateTime(timezone=True), nullable=True)
-    
-    def as_dict(self):
-       return {c.name: getattr(self, c.name) for c in self.__table__.columns}
+
+    def as_dict(self) -> dict:
+        """Convert the model instance to a dictionary."""
+        return {c.name: getattr(self, c.name) for c in self.__table__.columns}

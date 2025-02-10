@@ -1,0 +1,63 @@
+# Line length configuration
+line-length = 100
+
+# Assume Python 3.12+
+target-version = "py312"
+
+# Exclude files and directories
+exclude = [
+    ".bzr",
+    ".direnv",
+    ".eggs",
+    ".git",
+    ".git-rewrite",
+    ".hg",
+    ".mypy_cache",
+    ".nox",
+    ".pants.d",
+    ".pytype",
+    ".ruff_cache",
+    ".svn",
+    ".tox",
+    ".venv",
+    "__pypackages__",
+    "_build",
+    "buck-out",
+    "build",
+    "dist",
+    "node_modules",
+    "venv",
+    "scripts",
+    "fastapi-pundra1",
+    "tests",
+    "alembic"
+]
+
+[lint]
+# Enable all rules by default
+select = ["ALL"]
+
+# Exclude specific rules
+ignore = [
+    "D203",  # 1 blank line required before class docstring
+    "D212",  # Multi-line docstring summary should start at the first line
+    "D100",  # Missing docstring in public module
+    "PLR0913",  # Too many arguments to function call,
+    "I001",
+    "TC002",
+    "ARG002",
+    "TD002",
+    "TD003",
+    "FIX002"
+]
+
+# Allow unused variables when underscore-prefixed
+dummy-variable-rgx = "^(_+|(_+[a-zA-Z0-9_]*[a-zA-Z0-9]+?))$"
+
+# Allow fix for all enabled rules
+fixable = ["ALL"]
+unfixable = []
+
+[lint.per-file-ignores]
+"__init__.py" = ["F401"]  # Ignore unused imports in __init__.py files
+"tests/**/*.py" = ["S101", "PLR2004"]  # Use of assert detected, Magic value used in comparison
