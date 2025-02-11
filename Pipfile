@@ -26,6 +26,7 @@ pytest-cov = "*"
 factory-boy = "*"
 httpx = "*"
 ruff = "*"
+pre-commit = "*"
 
 [requires]
 python_version = "3.12"
