@@ -52,7 +52,9 @@ ignore = [
     "FIX002",  # Line contains TODO, consider resolving the issue
     "COM812",  # Missing trailing comma in Python 3.6+
     "N805",    # Instance method first argument name should be 'self'
-    "ERA001",
+    "ERA001",  # Found commented-out code
+    "FAST002", # FastAPI dependency injection error annotation
+    "B008",    # Do not perform function call in argument defaults
 ]
 
 # Allow unused variables when underscore-prefixed

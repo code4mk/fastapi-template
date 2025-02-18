@@ -1,5 +1,5 @@
 import os
-
+from collections.abc import Generator
 from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
@@ -29,6 +29,10 @@ Base = declarative_base()
 
 
 # Dependency function to get a database session
-def get_db() -> Session:
+def get_db_session() -> Generator[Session, None, None]:
     """Get a database session."""
-    return SessionLocal()
+    db = SessionLocal()
+    try:
+        yield db
+    finally:
+        db.close()
