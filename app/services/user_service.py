@@ -1,6 +1,5 @@
-from fastapi import BackgroundTasks, Request
+from fastapi import Request
 from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
-from fastapi_pundra.common.mailer.mail import send_mail_background
 from fastapi_pundra.common.password import compare_hashed_password, generate_password_hash
 from fastapi_pundra.rest.exceptions import (
     BaseAPIException,
@@ -9,8 +8,8 @@ from fastapi_pundra.rest.exceptions import (
 )
 from fastapi_pundra.rest.helpers import the_query, the_sorting
 from fastapi_pundra.rest.paginate import paginate
+from sqlalchemy.orm import Session
 
-from app.database import get_db
 from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
 from app.serializers.user_serializer import UserLoginSerializer, UserSerializer
@@ -19,18 +18,9 @@ from app.serializers.user_serializer import UserLoginSerializer, UserSerializer
 class UserService:
     """User service."""
 
-    def __init__(self) -> None:
-        """Initialize the user service."""
-        self.db = get_db()
-
-    async def s_registration(
-        self,
-        request: Request,
-        data: UserCreateSchema,
-        background_tasks: BackgroundTasks,
-    ) -> dict:
+    async def s_registration(self, request: Request, db: Session, data: UserCreateSchema) -> dict:
         """Register a new user."""
-        db_user = self.db.query(User).filter(User.email == data.email).first()
+        db_user = db.query(User).filter(User.email == data.email).first()
 
         if db_user:
             raise BaseAPIException(message="Email already registered", status_code=400)
@@ -41,32 +31,32 @@ class UserService:
         new_user.name = data.name
         new_user.status = "active"
 
-        self.db.add(new_user)
-        self.db.commit()
-        self.db.refresh(new_user)
+        db.add(new_user)
+        db.commit()
+        db.refresh(new_user)
 
         user_data = UserSerializer(**new_user.as_dict())
 
         # Send welcome email in background
-        template_name = "welcome_email.html"
-        context = {
-            "name": new_user.name or new_user.email,
-            "activation_link": f"{request.base_url}api/v1/users/activate",
-        }
+        # template_name = "welcome_email.html"
+        # context = {
+        #     "name": new_user.name or new_user.email,
+        #     "activation_link": f"{request.base_url}api/v1/users/activate",
+        # }
 
-        await send_mail_background(
-            background_tasks=background_tasks,
-            subject=f"Welcome, {new_user.name or new_user.email}!",
-            to=[new_user.email],
-            template_name=template_name,
-            context=context,
-        )
+        # await send_mail_background(
+        #     background_tasks=background_tasks,
+        #     subject=f"Welcome, {new_user.name or new_user.email}!",
+        #     to=[new_user.email],
+        #     template_name=template_name,
+        #     context=context,
+        # )
 
         return {"message": "Registration successful", "user": user_data.model_dump()}
 
-    async def s_get_users(self, request: Request) -> dict:
+    async def s_get_users(self, request: Request, db: Session) -> dict:
         """Get users."""
-        query = self.db.query(User)
+        query = db.query(User)
 
         # TODO: add logic here if you want to filter users
 
@@ -85,14 +75,14 @@ class UserService:
             additional_data=additional_data,
         )
 
-    async def s_get_user_by_id(self, request: Request, user_id: str) -> User:
+    async def s_get_user_by_id(self, request: Request, db: Session, user_id: str) -> User:
         """Get user by id."""
-        user = self.db.query(User).filter(User.id == user_id).first()
+        user = db.query(User).filter(User.id == user_id).first()
         if user is None:
             raise ItemNotFoundException(message="User not found")
         return user
 
-    async def s_login(self, request: Request) -> dict:
+    async def s_login(self, request: Request, db: Session) -> dict:
         """Login a user."""
         # Get data from request
         the_data = await the_query(request)
@@ -100,7 +90,7 @@ class UserService:
         password = the_data.get("password")
 
         # Find user by email
-        user = self.db.query(User).filter(User.email == email).first()
+        user = db.query(User).filter(User.email == email).first()
         if not user:
             raise UnauthorizedException(message="Invalid credentials")
 
@@ -130,10 +120,10 @@ class UserService:
             "refresh_token": refresh_token,
         }
 
-    async def s_update_user(self, request: Request, user_id: str) -> dict:
+    async def s_update_user(self, request: Request, db: Session, user_id: str) -> dict:
         """Update a user."""
         the_data = await the_query(request)
-        user = self.db.query(User).filter(User.id == user_id).first()
+        user = db.query(User).filter(User.id == user_id).first()
 
         if not user:
             raise ItemNotFoundException(message="User not found")
@@ -144,17 +134,17 @@ class UserService:
             user.email = the_data.get("email")
         if the_data.get("password"):
             user.password = generate_password_hash(the_data.get("password"))
-        self.db.commit()
-        self.db.refresh(user)
+        db.commit()
+        db.refresh(user)
 
         user_data = UserSerializer(**user.as_dict())
         return {"message": "User updated successfully", "user": user_data.model_dump()}
 
-    async def s_delete_user(self, request: Request, user_id: str) -> dict:
+    async def s_delete_user(self, request: Request, db: Session, user_id: str) -> dict:
         """Delete a user."""
-        user = self.db.query(User).filter(User.id == user_id).first()
+        user = db.query(User).filter(User.id == user_id).first()
         if not user:
             raise ItemNotFoundException(message="User not found")
-        self.db.delete(user)
-        self.db.commit()
+        db.delete(user)
+        db.commit()
         return {"message": "User deleted successfully"}
