@@ -16,11 +16,7 @@ class UserSerializer(BaseModel):
         """Serialize the id."""
         return str(uuid)
 
-    class Config:
-        """Config."""
-
-        from_orm = True
-        from_attributes = True
+    model_config = {"from_attributes": True}
 
 
 class UserLoginSerializer(BaseModel):
@@ -36,8 +32,4 @@ class UserLoginSerializer(BaseModel):
         """Serialize the id."""
         return str(uuid)
 
-    class Config:
-        """Config."""
-
-        from_orm = True
-        from_attributes = True
+    model_config = {"from_attributes": True}
