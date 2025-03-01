@@ -80,7 +80,8 @@ class UserService:
         user = db.query(User).filter(User.id == user_id).first()
         if user is None:
             raise ItemNotFoundException(message="User not found")
-        return user
+        user_data = UserSerializer(**user.as_dict())
+        return user_data.model_dump()
 
     async def s_login(self, request: Request, db: Session) -> dict:
         """Login a user."""
