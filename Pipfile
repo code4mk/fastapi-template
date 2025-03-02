@@ -17,7 +17,7 @@ wheel = "*"
 beautifulsoup4 = "*"
 premailer = "*"
 celery-redbeat = "*"
-fastapi-pundra = "==0.0.11"
+fastapi-pundra = "*"
 
 [dev-packages]
 pytest = "*"
