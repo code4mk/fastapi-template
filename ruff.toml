@@ -30,6 +30,7 @@ exclude = [
     "venv",
     "scripts",
     "fastapi-pundra1",
+    "fastapi-pundra",
     "tests",
     "alembic"
 ]
