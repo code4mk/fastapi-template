@@ -16,7 +16,9 @@ RUN apt-get update && apt-get upgrade -y && \
     DEBIAN_FRONTEND=noninteractive apt-get install -y --no-install-recommends \
     supervisor \
     nginx \
-    && rm -rf /var/lib/apt/lists/*
+    curl \
+    && rm -rf /var/lib/apt/lists/* \
+    && rm /etc/nginx/sites-enabled/default
 
 # Copy nginx configuration file to the appropriate directory
 COPY docker/config/nginx/app.conf /etc/nginx/sites-enabled/app.conf
