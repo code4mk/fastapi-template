@@ -1,4 +1,4 @@
-from fastapi import Request
+from fastapi import Request, BackgroundTasks
 from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
 from fastapi_pundra.common.password import compare_hashed_password, generate_password_hash
 from fastapi_pundra.rest.exceptions import (
@@ -9,6 +9,7 @@ from fastapi_pundra.rest.exceptions import (
 from fastapi_pundra.rest.helpers import the_query, the_sorting
 from fastapi_pundra.rest.paginate import paginate
 from sqlalchemy.orm import Session
+from fastapi_pundra.common.mailer.mail import send_mail_background
 
 from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
@@ -18,7 +19,13 @@ from app.serializers.user_serializer import UserLoginSerializer, UserSerializer
 class UserService:
     """User service."""
 
-    async def s_registration(self, request: Request, db: Session, data: UserCreateSchema) -> dict:
+    async def s_registration(
+        self,
+        request: Request,
+        db: Session,
+        data: UserCreateSchema,
+        background_tasks: BackgroundTasks,
+    ) -> dict:
         """Register a new user."""
         db_user = db.query(User).filter(User.email == data.email).first()
 
@@ -38,19 +45,19 @@ class UserService:
         user_data = UserSerializer(**new_user.as_dict())
 
         # Send welcome email in background
-        # template_name = "welcome_email.html"
-        # context = {
-        #     "name": new_user.name or new_user.email,
-        #     "activation_link": f"{request.base_url}api/v1/users/activate",
-        # }
+        template_name = "welcome_email.html"
+        context = {
+            "name": new_user.name or new_user.email,
+            "activation_link": f"{request.base_url}api/v1/users/activate",
+        }
 
-        # await send_mail_background(
-        #     background_tasks=background_tasks,
-        #     subject=f"Welcome, {new_user.name or new_user.email}!",
-        #     to=[new_user.email],
-        #     template_name=template_name,
-        #     context=context,
-        # )
+        await send_mail_background(
+            background_tasks=background_tasks,
+            subject=f"Welcome, {new_user.name or new_user.email}!",
+            to=[new_user.email],
+            template_name=template_name,
+            context=context,
+        )
 
         return {"message": "Registration successful", "user": user_data.model_dump()}
 
