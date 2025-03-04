@@ -72,3 +72,21 @@ async def delete_user(
     """Delete a user by id."""
     data = await user_service.s_delete_user(request, db, user_id=user_id)
     return JSONResponse(content=jsonable_encoder(data), status_code=status.HTTP_200_OK)
+
+
+@router.get("/users/raw-sql/users")
+async def raw_sql_get_users(
+    request: Request, db: Session = Depends(get_db_session)
+) -> JSONResponse:
+    """Get users using raw SQL."""
+    data = await user_service.s_raw_sql_get_users(request, db)
+    return JSONResponse(content=jsonable_encoder(data), status_code=status.HTTP_200_OK)
+
+
+@router.get("/users/raw-sql/users/{user_id}")
+async def raw_sql_get_user_by_id(
+    request: Request, user_id: str, db: Session = Depends(get_db_session)
+) -> JSONResponse:
+    """Get user by id using raw SQL."""
+    data = await user_service.s_raw_sql_get_user_by_id(request, db, user_id=user_id)
+    return JSONResponse(content=jsonable_encoder(data), status_code=status.HTTP_200_OK)
