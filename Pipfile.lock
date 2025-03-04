@@ -26,12 +26,12 @@
         },
         "alembic": {
             "hashes": [
-                "sha256:1acdd7a3a478e208b0503cd73614d5e4c6efafa4e73518bb60e4f2846a37b1c5",
-                "sha256:496e888245a53adf1498fcab31713a469c65836f8de76e01399aa1c3e90dd213"
+                "sha256:36c7c912d6badd0a952a639c6f1740be887a7549a943ecdddb04c97e9cbaa130",
+                "sha256:c1ba25da3c00a0510f22b8afefa678f6ee2cc3163a1ddcde5168a404fa5c0790"
             ],
             "index": "pypi",
-            "markers": "python_version >= '3.8'",
-            "version": "==1.14.1"
+            "markers": "python_version >= '3.9'",
+            "version": "==1.15.0"
         },
         "amqp": {
             "hashes": [
@@ -382,12 +382,12 @@
         },
         "fastapi-pundra": {
             "hashes": [
-                "sha256:83aa231776b3602d8b3afcbfd59fc60dabec03793aa6118bb537dc6adf34572c",
-                "sha256:fb860053a5590189a4ffb5410c994135a7f40b81f35451dde50554d07f627f0e"
+                "sha256:1f95696158f4b7dcbe91606aca46c81f1c392a14b697e88e34ee1f0248545dd7",
+                "sha256:4bafc05962532b1b1841270a30167f3ff581b8e9c9cb9656700ba96399ab25ec"
             ],
             "index": "pypi",
             "markers": "python_version >= '3.6'",
-            "version": "==0.0.12"
+            "version": "==0.0.13"
         },
         "h11": {
             "hashes": [

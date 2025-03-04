@@ -67,5 +67,5 @@ docker-compose.override.yml
 docs/_build/
 
 
-# fastapi-pundra/
+fastapi-pundra/
 fastapi-pundra1/
