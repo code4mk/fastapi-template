@@ -7,6 +7,7 @@ from fastapi_pundra.rest.exceptions import ItemNotFoundException, UnauthorizedEx
 from app.schemas.user_schema import UserCreateSchema
 from app.models.users import User
 from fastapi_pundra.common.password import compare_hashed_password
+from fastapi import BackgroundTasks
 
 @pytest.fixture
 def user_service():
@@ -33,13 +34,14 @@ async def test_get_users(user_service, db):
 @pytest.mark.asyncio
 async def test_registration_success(user_service, db):
     mock_request = Mock(spec=Request)
+    background_tasks = BackgroundTasks()
     user_data = UserCreateSchema(
         email="mostafa@example.com",
         password="password123",
         name="Test User mostafa"
     )
 
-    result = await user_service.s_registration(mock_request, db, user_data)
+    result = await user_service.s_registration(mock_request, db, user_data, background_tasks)
     
     assert result["message"] == "Registration successful"
     assert result["user"]["email"] == "mostafa@example.com"
@@ -49,6 +51,7 @@ async def test_registration_success(user_service, db):
 @pytest.mark.asyncio
 async def test_registration_duplicate_email(user_service, db):
     mock_request = Mock(spec=Request)
+    background_tasks = BackgroundTasks()
     user_data = UserCreateSchema(
         email="mostafa@example.com",  # Using the same email as existing_user
         password="password123",
@@ -56,7 +59,7 @@ async def test_registration_duplicate_email(user_service, db):
     )
 
     with pytest.raises(BaseAPIException) as exc:
-        await user_service.s_registration(mock_request, db, user_data)
+        await user_service.s_registration(mock_request, db, user_data, background_tasks)
     assert str(exc.value.message) == "Email already registered"  # Fixed assertion to be outside the with block
 
 @pytest.mark.asyncio
