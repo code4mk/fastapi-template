@@ -15,6 +15,13 @@ from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
 from app.serializers.user_serializer import UserLoginSerializer, UserSerializer
 
+from fastapi_pundra.common.raw_sql.utils import (
+    raw_sql_fetch_all,
+    raw_sql_rest_paginate,
+    load_sql_file,
+    raw_sql_fetch_one,
+)
+
 
 class UserService:
     """User service."""
@@ -156,3 +163,33 @@ class UserService:
         db.delete(user)
         db.commit()
         return {"message": "User deleted successfully"}
+
+    async def s_raw_sql_get_users(self, request: Request, db: Session) -> dict:
+        """Get users using raw SQL."""
+        the_sql_content = load_sql_file("users.fetch-all-users")
+        # Execute the raw SQL query using SQLAlchemy with text()
+        result = db.execute(the_sql_content)
+
+        users_list = raw_sql_fetch_all(result)
+
+        def additional_data(data: list) -> dict:
+            total_active_users = len([user for user in data if user["status"] == "active"])
+            total_inactive_users = len([user for user in data if user["status"] == "inactive"])
+            return {"active_users": total_active_users, "inactive_users": total_inactive_users}
+
+        paginated_users_list = raw_sql_rest_paginate(
+            request=request,
+            query_data=users_list,
+            serializer=UserSerializer,
+            wrap="users",
+            additional_data=additional_data,
+        )
+        return paginated_users_list
+
+    async def s_raw_sql_get_user_by_id(self, request: Request, db: Session, user_id: str) -> dict:
+        """Get user by id using raw SQL."""
+        sql_query = load_sql_file(
+            "users.fetch-single-user", sql_vars={"user_id": "d4e8ddd3-7528-4c06-9f56-0247d98ddf79"}
+        )
+        result = db.execute(sql_query)
+        return raw_sql_fetch_one(result, serializer=UserSerializer)
