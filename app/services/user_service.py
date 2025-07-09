@@ -22,6 +22,10 @@ from fastapi_pundra.common.raw_sql.utils import (
     raw_sql_fetch_one,
 )
 
+from app.utils.logger import get_logger
+
+logger = get_logger()
+
 
 class UserService:
     """User service."""
@@ -107,10 +111,12 @@ class UserService:
         # Find user by email
         user = db.query(User).filter(User.email == email).first()
         if not user:
+            logger.error("Invalid credentials for user %s", email)
             raise UnauthorizedException(message="Invalid credentials")
 
         # Verify password
         if not compare_hashed_password(password, user.password):
+            logger.error("Invalid credentials for user %s", email)
             raise UnauthorizedException(message="Invalid credentials")
 
         # Create token payload
@@ -126,6 +132,11 @@ class UserService:
         refresh_token = create_refresh_token(token_payload)
 
         user_data = UserLoginSerializer(**user.as_dict())
+        logger.info(
+            "Login successful for user %s",
+            user.email,
+            extra={"user": user.email, "status": "success"},
+        )
 
         return {
             "message": "Login successful",
