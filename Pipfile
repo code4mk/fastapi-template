@@ -18,6 +18,7 @@ beautifulsoup4 = "*"
 premailer = "*"
 celery-redbeat = "*"
 fastapi-pundra = "*"
+loguru = "*"
 
 [dev-packages]
 pytest = "*"
