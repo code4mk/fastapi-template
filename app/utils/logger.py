@@ -2,7 +2,8 @@ from __future__ import annotations
 
 import sys
 import socket
-from loguru import logger, Logger
+from loguru import logger
+from loguru._logger import Logger as LoguruLogger
 
 
 def get_host_ip() -> str:
@@ -48,6 +49,6 @@ logger.add(
 )
 
 
-def get_logger() -> Logger:
+def get_logger() -> LoguruLogger:
     """Return the Loguru logger instance."""
     return logger
