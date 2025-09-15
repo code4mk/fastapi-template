@@ -59,12 +59,12 @@ send_email_queue_task.delay(
 from fastapi_pundra.common.mailer.task import send_email_queue_task
 
 send_email_queue_task.apply_async(
-    args=[
-        f"Welcome, {new_user.name or new_user.email}!",
-        [new_user.email],
-        template_name,
-        context,
-    ],
+    kwarg={
+        "subject": f"Welcome, {new_user.name or new_user.email}!",
+        "to": [new_user.email],
+        "template_name": template_name,
+        "context": context,
+    },
     countdown=120,
 )
 ```

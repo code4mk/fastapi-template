@@ -9,7 +9,6 @@ from fastapi_pundra.rest.exceptions import (
 from fastapi_pundra.rest.helpers import the_query, the_sorting
 from fastapi_pundra.rest.paginate import paginate
 from sqlalchemy.orm import Session
-from fastapi_pundra.common.mailer.mail import send_mail_background
 
 from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
@@ -62,13 +61,25 @@ class UserService:
             "activation_link": f"{request.base_url}api/v1/users/activate",
         }
 
-        await send_mail_background(
-            background_tasks=background_tasks,
-            subject=f"Welcome, {new_user.name or new_user.email}!",
-            to=[new_user.email],
-            template_name=template_name,
-            context=context,
+        from fastapi_pundra.common.mailer.task import send_email_queue_task
+
+        send_email_queue_task.apply_async(
+            kwargs={
+                "subject": f"Welcome, {new_user.name or new_user.email}!",
+                "to": [new_user.email],
+                "template_name": template_name,
+                "context": context,
+            },
+            countdown=20,
         )
+
+        # await send_mail_background(
+        #     background_tasks=background_tasks,
+        #     subject=f"Welcome, {new_user.name or new_user.email}!",
+        #     to=[new_user.email],
+        #     template_name=template_name,
+        #     context=context,
+        # )
 
         return {"message": "Registration successful", "user": user_data.model_dump()}
 
@@ -78,7 +89,7 @@ class UserService:
 
         # TODO: add logic here if you want to filter users
 
-        query = the_sorting(request, query)
+        query = the_sorting(request, query, default_sort="email")
 
         def additional_data(data: list) -> dict:
             total_active_users = len([user for user in data if user.status == "active"])
