@@ -4,12 +4,10 @@ ARG PYTHON_VERSION=3.12-slim
 # Base image with configurable Python version
 FROM python:${PYTHON_VERSION}
 
-# Prevent Python from writing pyc files to save disk space
-ENV PYTHONDONTWRITEBYTECODE 1
-# Ensure Python outputs everything that's printed inside it without buffering
-ENV PYTHONUNBUFFERED 1
-# Ignore pipenv warnings about being root user
-ENV PIP_ROOT_USER_ACTION ignore
+# Environment variables
+ENV PYTHONDONTWRITEBYTECODE=1 \
+    PYTHONUNBUFFERED=1 \
+    PIP_ROOT_USER_ACTION=ignore
 
 # Update package lists and install supervisor and nginx without recommended packages to keep the image slim
 RUN apt-get update && apt-get upgrade -y && \
