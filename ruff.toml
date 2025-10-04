@@ -57,6 +57,7 @@ ignore = [
     "FAST002", # FastAPI dependency injection error annotation
     "B008",    # Do not perform function call in argument defaults
     "RET504",
+    "F841",  # Unused variable
 ]
 
 # Allow unused variables when underscore-prefixed

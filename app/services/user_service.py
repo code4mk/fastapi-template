@@ -1,6 +1,7 @@
 from fastapi import Request, BackgroundTasks
 from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
 from fastapi_pundra.common.password import compare_hashed_password, generate_password_hash
+from fastapi_pundra.rest.helpers import get_serialize_data
 from fastapi_pundra.rest.exceptions import (
     BaseAPIException,
     ItemNotFoundException,
@@ -52,7 +53,7 @@ class UserService:
         db.commit()
         db.refresh(new_user)
 
-        user_data = UserSerializer(**new_user.as_dict())
+        user_data = get_serialize_data(UserSerializer, new_user.as_dict())
 
         # Send welcome email in background
         template_name = "welcome_email.html"
@@ -61,17 +62,17 @@ class UserService:
             "activation_link": f"{request.base_url}api/v1/users/activate",
         }
 
-        from fastapi_pundra.common.mailer.task import send_email_queue_task
+        # from fastapi_pundra.common.mailer.task import send_email_queue_task
 
-        send_email_queue_task.apply_async(
-            kwargs={
-                "subject": f"Welcome, {new_user.name or new_user.email}!",
-                "to": [new_user.email],
-                "template_name": template_name,
-                "context": context,
-            },
-            countdown=20,
-        )
+        # send_email_queue_task.apply_async(
+        #     kwargs={
+        #         "subject": f"Welcome, {new_user.name or new_user.email}!",
+        #         "to": [new_user.email],
+        #         "template_name": template_name,
+        #         "context": context,
+        #     },
+        #     countdown=20,
+        # )
 
         # await send_mail_background(
         #     background_tasks=background_tasks,
@@ -81,7 +82,7 @@ class UserService:
         #     context=context,
         # )
 
-        return {"message": "Registration successful", "user": user_data.model_dump()}
+        return {"message": "Registration successful", "user": user_data}
 
     async def s_get_users(self, request: Request, db: Session) -> dict:
         """Get users."""
@@ -107,10 +108,12 @@ class UserService:
     async def s_get_user_by_id(self, request: Request, db: Session, user_id: str) -> User:
         """Get user by id."""
         user = db.query(User).filter(User.id == user_id).first()
+
         if user is None:
             raise ItemNotFoundException(message="User not found")
-        user_data = UserSerializer(**user.as_dict())
-        return user_data.model_dump()
+
+        user_data = get_serialize_data(UserSerializer, user.as_dict())
+        return user_data
 
     async def s_login(self, request: Request, db: Session) -> dict:
         """Login a user."""
@@ -142,7 +145,8 @@ class UserService:
         access_token = create_access_token(token_payload)
         refresh_token = create_refresh_token(token_payload)
 
-        user_data = UserLoginSerializer(**user.as_dict())
+        user_data = get_serialize_data(UserLoginSerializer, user.as_dict())
+
         logger.info(
             "Login successful for user %s",
             user.email,
@@ -150,8 +154,9 @@ class UserService:
         )
 
         return {
+            "success": True,
             "message": "Login successful",
-            "user": user_data.model_dump(),
+            "user": user_data,
             "type": "Bearer",
             "access_token": access_token,
             "refresh_token": refresh_token,
@@ -174,8 +179,12 @@ class UserService:
         db.commit()
         db.refresh(user)
 
-        user_data = UserSerializer(**user.as_dict())
-        return {"message": "User updated successfully", "user": user_data.model_dump()}
+        user_data = get_serialize_data(UserSerializer, user.as_dict())
+        return {
+            "success": True,
+            "message": "User updated successfully",
+            "user": user_data,
+        }
 
     async def s_delete_user(self, request: Request, db: Session, user_id: str) -> dict:
         """Delete a user."""
@@ -184,7 +193,10 @@ class UserService:
             raise ItemNotFoundException(message="User not found")
         db.delete(user)
         db.commit()
-        return {"message": "User deleted successfully"}
+        return {
+            "success": True,
+            "message": "User deleted successfully",
+        }
 
     async def s_raw_sql_get_users(self, request: Request, db: Session) -> dict:
         """Get users using raw SQL."""
@@ -210,8 +222,7 @@ class UserService:
 
     async def s_raw_sql_get_user_by_id(self, request: Request, db: Session, user_id: str) -> dict:
         """Get user by id using raw SQL."""
-        sql_query = load_sql_file(
-            "users.fetch-single-user", sql_vars={"user_id": "d4e8ddd3-7528-4c06-9f56-0247d98ddf79"}
-        )
+        sql_query = load_sql_file("users.fetch-single-user", sql_vars={"user_id": user_id})
         result = db.execute(sql_query)
-        return raw_sql_fetch_one(result, serializer=UserSerializer)
+        user = raw_sql_fetch_one(result, serializer=UserSerializer)
+        return user
