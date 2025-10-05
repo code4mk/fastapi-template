@@ -82,7 +82,11 @@ class UserService:
         #     context=context,
         # )
 
-        return {"message": "Registration successful", "user": user_data}
+        return {
+            "success": True,
+            "message": "Registration successful",
+            "user": user_data,
+        }
 
     async def s_get_users(self, request: Request, db: Session) -> dict:
         """Get users."""
@@ -225,4 +229,8 @@ class UserService:
         sql_query = load_sql_file("users.fetch-single-user", sql_vars={"user_id": user_id})
         result = db.execute(sql_query)
         user = raw_sql_fetch_one(result, serializer=UserSerializer)
+
+        if not user:
+            raise ItemNotFoundException(message="User not found")
+
         return user

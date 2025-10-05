@@ -1,10 +1,11 @@
 from __future__ import annotations
-
+from typing import Any
 from fastapi import APIRouter, Request, status, Depends, BackgroundTasks
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
 from fastapi_pundra.rest.helpers import the_query
 from fastapi_pundra.rest.validation import dto
+from fastapi_pundra.rest.openapi import openapi_request_body_schema
 from sqlalchemy.orm import Session
 from app.database.database import get_db_session
 from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
@@ -18,11 +19,11 @@ user_service = UserService()
 
 
 # Registration route
-@router.post("/users/registration")
+@router.post("/users/registration", openapi_extra={**openapi_request_body_schema(UserCreateSchema)})
 @dto(UserCreateSchema)
 async def registration(
     request: Request, background_tasks: BackgroundTasks, db: Session = Depends(get_db_session)
-) -> JSONResponse:
+) -> dict[str, Any]:
     """Register a new user."""
     # Retrieve data from the request
     request_data = await the_query(request)
@@ -55,12 +56,21 @@ async def get_user(
     return JSONResponse(content=jsonable_encoder(data), status_code=status.HTTP_200_OK)
 
 
-@router.put("/users/{user_id}/update")
+@router.put(
+    "/users/{user_id}/update", openapi_extra={**openapi_request_body_schema(UserUpdateSchema)}
+)
 @dto(UserUpdateSchema)
 async def update_user(
     request: Request, user_id: int | str, db: Session = Depends(get_db_session)
-) -> JSONResponse:
-    """Update a user by id."""
+) -> dict[str, Any]:
+    """
+    Update a user by id.
+
+    The request body will be validated against UserUpdateSchema.
+    """
+    # The validated data is now available in request.state.validated_data
+    data = request.state.validated_data
+
     data = await user_service.s_update_user(request, db, user_id=user_id)
     return JSONResponse(content=jsonable_encoder(data), status_code=status.HTTP_200_OK)
 

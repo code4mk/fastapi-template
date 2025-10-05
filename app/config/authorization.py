@@ -5,4 +5,7 @@ EXCLUDE_PATHS = [
     "/health/check",
     "/api/v1/users/login",
     "/api/v1/users/registration",
+    "/docs",
+    "/redoc",
+    "/openapi.json",
 ]

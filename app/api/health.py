@@ -7,14 +7,14 @@ router = APIRouter()
 
 # Health check route
 @router.get("/")
-async def health_check() -> JSONResponse:
+async def health() -> JSONResponse:
     """Health check route."""
     data = {"status": "ok"}
     return JSONResponse(content=data, status_code=status.HTTP_200_OK)
 
 
 @router.get("/check")
-async def health_check_now() -> JSONResponse:
+async def health_check() -> JSONResponse:
     """Health check route."""
     data = {"status": "ok"}
     return JSONResponse(content=data, status_code=status.HTTP_200_OK)
