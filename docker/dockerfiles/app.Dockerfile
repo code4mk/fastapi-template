@@ -30,21 +30,22 @@ RUN mkdir -p /var/log/supervisord /var/run/supervisord
 # Set the working directory for subsequent commands
 WORKDIR /var/www/app
 
-# Copy Pipfile and Pipfile.lock to the working directory
-COPY Pipfile .
-COPY Pipfile.lock .
+# Install uv for faster dependency management
+COPY --from=ghcr.io/astral-sh/uv:latest /uv /usr/local/bin/uv
 
-# Install pipenv using Python's package manager
-RUN python3 -m pip install pipenv
+# Copy dependency files and README (required by hatchling build)
+COPY pyproject.toml uv.lock  ./
 
-# Install Python dependencies defined in Pipfile.lock using pipenv
-RUN pipenv install --ignore-pipfile
+
+# Install dependencies (remove any existing venv first)
+RUN rm -rf .venv && uv sync --frozen
+
 
 # Copy the entire application code to the working directory
-COPY . .
+COPY ./app ./app
 
 # Expose port 8000 for the application
 EXPOSE 8000
 
 # Command to start supervisor with the specified configuration file, running in the foreground
-CMD supervisord -n -c /etc/supervisor/conf.d/supervisord.conf
+CMD ["supervisord", "-n", "-c", "/etc/supervisor/conf.d/supervisord.conf"]

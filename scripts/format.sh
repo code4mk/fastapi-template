@@ -1,2 +1,2 @@
 #!/bin/bash
-ruff format . 
+uv run ruff format . 

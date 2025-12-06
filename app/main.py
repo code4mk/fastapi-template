@@ -1,3 +1,4 @@
+import uvicorn
 from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
@@ -40,3 +41,8 @@ def create_application() -> FastAPI:
 
 # Create the FastAPI application
 app = create_application()
+
+
+def run() -> None:
+    """Run the FastAPI application with uvicorn."""
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)  # noqa: S104
