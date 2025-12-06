@@ -1,53 +1,102 @@
-# FastApi project template
+# FastAPI Project Template
 
-## Setup project
+A modern, production-ready FastAPI template with built-in features for rapid development and deployment.
+
+## Features
+
+- 🚀 **FastAPI** - Modern, fast web framework for building APIs
+- 🗄️ **SQLAlchemy** - Powerful SQL toolkit and ORM
+- 🔄 **Alembic** - Database migration management
+- 🧪 **Pytest** - Comprehensive testing framework
+- 🔧 **UV** - Ultra-fast Python package manager
+- 📧 **Email Templates** - Built-in email templating system
+- 🔐 **JWT Authentication** - Secure user authentication
+- 🐳 **Docker** - Containerization support
+- 📊 **Celery** - Distributed task queue
+- 🎯 **Ruff** - Lightning-fast Python linter and formatter
+
+## Prerequisites
+
+- Python 3.12 or higher
+- UV package manager (recommended)
+
+## Quick Start
+
+### 1. Setup Project
+
+Clone the repository and install dependencies:
+
 ```bash
-# Activate virtual environment
-pipenv shell
-
 # Install dependencies
-pipenv install
+uv sync
+
+# Install with development dependencies (recommended for development)
+uv sync --extra dev
 ```
 
-## Add env
-* add env file in root directory
-* copy from `.env.example`
+> **Note**: The `--extra dev` flag installs additional development tools like testing frameworks, linters, and formatters.
+
+### 2. Environment Configuration
+
+Create your environment configuration:
 
 ```bash
-.env
+# Copy the example environment file
+cp .env.example .env
+
+# Edit the .env file with your specific configuration
+# Configure database URL, secret keys, email settings, etc.
 ```
 
-## Run project
+**Important environment variables to configure:**
+- `DATABASE_URL` - Your database connection string
+- `SECRET_KEY` - JWT secret key for authentication
+- `SMTP_*` - Email configuration for notifications
+- `REDIS_URL` - Redis connection for Celery (if using background tasks)
 
-run the project
-```bash
-uvicorn app.main:app --reload --port 8000
-# or
-./run-project.sh
-```
+### 3. Database Setup
 
-## Database migration process with Alembic
-Alembic is a database migration tool for SQLAlchemy.
+This project uses **Alembic** for database schema management and migrations.
 
-### revision (migration)
-you can use the following command to create a new migration file.
-
-```bash
-alembic revision --autogenerate -m "initial project"
-```
-
-this will create a new migration file in the `alembic/versions` directory.
-
-### upgrade (migrate)
-you can use the following command to migrate the database.
+Initialize and upgrade your database:
 
 ```bash
-alembic upgrade head
+# Run database migrations
+uv run db-upgrade
+
+# create a new database revision
+uv run db-revision "Initial database setup"
 ```
+
+### 4. Run the Application
+
+Start the development server:
+
+```bash
+# Start the FastAPI development server
+uv run start-server
+```
+
+The API will be available at:
+- **API**: http://localhost:8000
+- **Interactive Docs**: http://localhost:8000/docs
+- **ReDoc**: http://localhost:8000/redoc
+
 
 ## Directory structure
 
 ```bash
+├── _docs/
+│   ├── celery.md
+│   ├── containerization.md
+│   ├── lint-formatting.md
+│   ├── mailing.md
+│   └── testing.md
+├── alembic/
+│   ├── env.py
+│   ├── README
+│   ├── script.py.mako
+│   └── versions/
 ├── app/
 │   ├── api/
 │   │   ├── v1/
@@ -56,7 +105,8 @@ alembic upgrade head
 │   │   └── root_index.py
 │   ├── config/
 │   │   ├── authorization.py
-│   │   └── cors.py
+│   │   ├── cors.py
+│   │   └── scheduler.py
 │   ├── database/
 │   │   └── database.py
 │   ├── middleware/
@@ -69,35 +119,65 @@ alembic upgrade head
 │   │   └── user_serializer.py
 │   ├── services/
 │   │   └── user_service.py
+│   ├── sql_files/
+│   │   └── users/
+│   │       ├── fetch-all-users.sql
+│   │       └── fetch-single-user.sql
+│   ├── tasks/
+│   │   └── my_task.py
 │   ├── templates/
 │   │   ├── mails/
 │   │   │   ├── css/
 │   │   │   │   └── mail.css
 │   │   │   └── welcome_email.html
 │   │   └── user.html
+│   ├── tests/
+│   │   ├── conftest.py
+│   │   ├── factories/
+│   │   │   └── user_factory.py
+│   │   ├── fixtures/
+│   │   │   └── common.py
+│   │   ├── integration/
+│   │   │   ├── test_health.py
+│   │   │   └── test_user.py
+│   │   └── unit/
+│   │       ├── test_user_services.py
+│   │       └── test_users_models.py
 │   ├── utils/
-│   │   ├── mailer/
-│   │   │   ├── inline_css.py
-│   │   │   ├── mail.py
-│   │   │   └── mail_templating.py
 │   │   ├── base.py
-│   │   ├── jwt_utils.py
-│   │   ├── paginate.py
-│   │   ├── password.py
-│   │   └── validation.py
-│   ├── __init__.py
+│   │   └── logger.py
+│   ├── celery.py
+│   ├── cli.py
 │   └── main.py
-├── alembic/*
-├── docker/*
+├── docker/
+│   ├── config/
+│   │   ├── nginx/
+│   │   │   └── app.conf
+│   │   └── supervisor/
+│   │       └── supervisord.conf
+│   └── dockerfiles/
+│       └── app.Dockerfile
+├── fastapi-pundra/
+│   ├── deploy.sh
+│   ├── fastapi_pundra/
+│   │   ├── common/
+│   │   ├── gql_berry/
+│   │   └── rest/
+│   ├── README.md
+│   └── setup.py
+├── logs/
+│   └── app.log
+├── scripts/
+│   ├── deploy.sh
+│   ├── docker_image_build.sh
+│   ├── format.sh
+│   ├── lint.sh
+│   └── test.sh
 ├── alembic.ini
-├── .env
-├── .env.example
-├── .gitignore
-├── build.sh
-├── Pipfile
-├── Pipfile.lock
+├── pyproject.toml
 ├── README.md
-└── run-project.sh
+├── ruff.toml
+└── uv.lock
 ```
 
 > [!NOTE]  

@@ -43,6 +43,8 @@ dev = [
 
 [project.scripts]
 start-server = "app.main:run"
+db-revision = "app.cli:make_revision"
+db-upgrade = "app.cli:upgrade"
 
 [build-system]
 requires = ["hatchling"]
