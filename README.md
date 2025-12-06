@@ -4,16 +4,17 @@ A modern, production-ready FastAPI template with built-in features for rapid dev
 
 ## Features
 
-- 🚀 **FastAPI** - Modern, fast web framework for building APIs
-- 🗄️ **SQLAlchemy** - Powerful SQL toolkit and ORM
-- 🔄 **Alembic** - Database migration management
-- 🧪 **Pytest** - Comprehensive testing framework
-- 🔧 **UV** - Ultra-fast Python package manager
-- 📧 **Email Templates** - Built-in email templating system
-- 🔐 **JWT Authentication** - Secure user authentication
-- 🐳 **Docker** - Containerization support
-- 📊 **Celery** - Distributed task queue
-- 🎯 **Ruff** - Lightning-fast Python linter and formatter
+- **FastAPI** - Modern, fast web framework for building APIs
+- **FastAPI Pundra** - FastAPI Companion for Productivity
+- **SQLAlchemy** - Powerful SQL toolkit and ORM
+- **Alembic** - Database migration management
+- **Pytest** - Comprehensive testing framework
+- **UV** - Ultra-fast Python package manager
+- **Email Templates** - Built-in email templating system
+- **JWT Authentication** - Secure user authentication
+- **Docker** - Containerization support
+- **Celery** - Distributed task queue
+- **Ruff** - Lightning-fast Python linter and formatter
 
 ## Prerequisites
 
@@ -81,7 +82,6 @@ The API will be available at:
 - **API**: http://localhost:8000
 - **Interactive Docs**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
-
 
 ## Directory structure
 
