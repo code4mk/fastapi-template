@@ -8,6 +8,8 @@ from taskiq import AsyncBroker
 from app.utils.tskq.taskiq_broker import create_broker
 from dotenv import load_dotenv
 from app.utils.tskq.taskiq_helper import discover_and_import_tasks
+from taskiq import TaskiqScheduler
+from taskiq.schedule_sources import LabelScheduleSource
 
 load_dotenv()
 
@@ -78,3 +80,10 @@ def get_taskiq_broker() -> AsyncBroker:
 
 
 discover_and_import_tasks()
+
+
+# Create scheduler with label schedule source
+taskiq_scheduler = TaskiqScheduler(
+    broker=taskiq_broker,
+    sources=[LabelScheduleSource(taskiq_broker)],
+)

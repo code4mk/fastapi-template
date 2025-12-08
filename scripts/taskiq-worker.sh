@@ -9,5 +9,5 @@ set -x
 echo "Starting Taskiq worker..."
 echo "Make sure Redis is running on redis://localhost:6379/0 or set REDIS_URL environment variable"
 
-# Run the taskiq worker command
-uv run python -m taskiq worker app.taskiq:taskiq_broker "${@}"
+# Run the taskiq worker command with single process (fixed duplicate messages)
+uv run python -m taskiq worker app.taskiq:taskiq_broker --workers 1 "${@}"
