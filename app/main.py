@@ -7,7 +7,7 @@ from fastapi_pundra.rest.global_exception_handler import setup_exception_handler
 from app.api import health, root_index
 from app.api.v1 import user
 from app.config.cors import CORS_CONFIG
-from app.middleware.authorization_middleware import AuthorizationMiddleware
+from app.taskiq import setup_taskiq
 
 # Load .env file
 load_dotenv()
@@ -21,7 +21,10 @@ def create_application() -> FastAPI:
     setup_exception_handlers(application)
 
     # Setup authorization middleware
-    application.add_middleware(AuthorizationMiddleware)
+    # application.add_middleware(AuthorizationMiddleware)
+
+    # Setup Taskiq integration
+    setup_taskiq(application)
 
     # Include the root index and health router
     application.include_router(root_index.router)
