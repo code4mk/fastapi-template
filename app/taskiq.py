@@ -10,6 +10,7 @@ from dotenv import load_dotenv
 from app.utils.tskq.taskiq_helper import discover_and_import_tasks
 from taskiq import TaskiqScheduler
 from taskiq.schedule_sources import LabelScheduleSource
+from app.utils.tskq.redis_schedule_source import RedisScheduleSource
 
 load_dotenv()
 
@@ -79,11 +80,29 @@ def get_taskiq_broker() -> AsyncBroker:
     return taskiq_broker
 
 
+def get_taskiq_scheduler() -> TaskiqScheduler:
+    """Get the configured Taskiq scheduler instance."""
+    return taskiq_scheduler
+
+
 discover_and_import_tasks()
 
 
-# Create scheduler with label schedule source
+# Create dynamic schedule source for runtime task management
+# Use Redis-backed source for inter-process communication
+redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
+dynamic_schedule_source = RedisScheduleSource(redis_url=redis_url)
+
+# Create scheduler with both label-based and dynamic schedule sources
 taskiq_scheduler = TaskiqScheduler(
     broker=taskiq_broker,
-    sources=[LabelScheduleSource(taskiq_broker)],
+    sources=[
+        LabelScheduleSource(taskiq_broker),  # For tasks with schedule decorators
+        dynamic_schedule_source,  # For dynamically added tasks (Redis-backed)
+    ],
 )
+
+
+def get_dynamic_schedule_source() -> RedisScheduleSource:
+    """Get the dynamic schedule source instance."""
+    return dynamic_schedule_source
