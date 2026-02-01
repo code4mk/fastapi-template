@@ -3,11 +3,8 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pundra.rest.global_exception_handler import setup_exception_handlers
-
-from app.api import health, root_index
-from app.api.v1 import user
+from app.api.router import router as api_router
 from app.config.cors import CORS_CONFIG
-from app.taskiq import setup_taskiq
 
 # Load .env file
 load_dotenv()
@@ -23,15 +20,8 @@ def create_application() -> FastAPI:
     # Setup authorization middleware
     # application.add_middleware(AuthorizationMiddleware)
 
-    # Setup Taskiq integration
-    setup_taskiq(application)
-
-    # Include the root index and health router
-    application.include_router(root_index.router)
-    application.include_router(health.router, prefix="/health")
-
-    # Include all the api routes
-    application.include_router(user.router, prefix="/api/v1")
+    # Auto-include all API routes from app.api folder
+    application.include_router(api_router)
 
     # CORS middleware
     application.add_middleware(
@@ -48,4 +38,9 @@ app = create_application()
 
 def run() -> None:
     """Run the FastAPI application with uvicorn."""
+    uvicorn.run("app.main:app", host="0.0.0.0", port=8000)  # noqa: S104
+
+
+def run_dev() -> None:
+    """Run the FastAPI application with uvicorn in development mode."""
     uvicorn.run("app.main:app", host="0.0.0.0", port=8000, reload=True)  # noqa: S104

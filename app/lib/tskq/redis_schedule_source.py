@@ -40,6 +40,42 @@ class RedisScheduleSource(ScheduleSource):
         """Get Redis key for the schedule list."""
         return f"{self.key_prefix}:list"
 
+    async def pre_send(self, task: ScheduledTask) -> ScheduledTask | None:
+        """
+        Intercept and store dynamically scheduled tasks before sending.
+
+        This method allows the schedule source to intercept and store
+        dynamically scheduled tasks. It returns None to indicate that
+        the task should be stored for scheduling, or returns the task
+        to have it executed immediately instead.
+
+        Args:
+            task: The ScheduledTask to be scheduled
+
+        Returns:
+            None to store the schedule, or the task to execute immediately
+
+        """
+        # Store the scheduled task in Redis
+        await self.add_schedule(task)
+        # Return None to indicate the task was stored and should not be executed immediately
+        return None
+
+    async def update_schedules(self, new_schedules: list[ScheduledTask]) -> None:
+        """
+        Update the schedules in Redis.
+
+        This method is called by TaskIQ when schedules are modified.
+        For Redis-backed sources, we don't need to do anything here
+        as schedules are already stored in Redis via pre_send and add_schedule.
+
+        Args:
+            new_schedules: List of ScheduledTask objects
+
+        """
+        # Redis-backed source doesn't need to do anything here
+        # Schedules are already stored via add_schedule in pre_send
+
     async def get_schedules(self) -> list[ScheduledTask]:
         """Get list of all scheduled tasks from Redis."""
         redis_client = await self._get_redis()

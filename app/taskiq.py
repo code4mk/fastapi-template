@@ -5,12 +5,13 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from taskiq import AsyncBroker
 
-from app.utils.tskq.taskiq_broker import create_broker
+from app.lib.tskq.taskiq_broker import create_broker
 from dotenv import load_dotenv
-from app.utils.tskq.taskiq_helper import discover_and_import_tasks
+from app.lib.tskq.taskiq_helper import discover_and_import_tasks
 from taskiq import TaskiqScheduler
 from taskiq.schedule_sources import LabelScheduleSource
-from app.utils.tskq.redis_schedule_source import RedisScheduleSource
+from app.lib.tskq.redis_schedule_source import RedisScheduleSource
+from taskiq_redis import ListRedisScheduleSource
 
 load_dotenv()
 
@@ -92,6 +93,7 @@ discover_and_import_tasks()
 # Use Redis-backed source for inter-process communication
 redis_url = os.getenv("REDIS_URL", "redis://localhost:6379/0")
 dynamic_schedule_source = RedisScheduleSource(redis_url=redis_url)
+# list_schedule_source = ListRedisScheduleSource(url=redis_url)
 
 # Create scheduler with both label-based and dynamic schedule sources
 taskiq_scheduler = TaskiqScheduler(
@@ -99,6 +101,7 @@ taskiq_scheduler = TaskiqScheduler(
     sources=[
         LabelScheduleSource(taskiq_broker),  # For tasks with schedule decorators
         dynamic_schedule_source,  # For dynamically added tasks (Redis-backed)
+        ListRedisScheduleSource(url=redis_url),  # For dynamically added tasks (List-backed)
     ],
 )
 
@@ -106,3 +109,8 @@ taskiq_scheduler = TaskiqScheduler(
 def get_dynamic_schedule_source() -> RedisScheduleSource:
     """Get the dynamic schedule source instance."""
     return dynamic_schedule_source
+
+
+def get_list_schedule_source() -> ListRedisScheduleSource:
+    """Get the list schedule source instance."""
+    return ListRedisScheduleSource(url=redis_url)

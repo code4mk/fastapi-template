@@ -15,7 +15,7 @@ project_root = str(Path(__file__).parents[1])
 sys.path.append(project_root)
 
 # After adding the project root to the Python path, we can import the Base class
-from app.database.database import Base
+from app.lib.database import Base
 
 # Load environment variables
 load_dotenv()
