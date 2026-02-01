@@ -27,11 +27,13 @@ config = context.config
 
 # Construct the complete database URL from environment variables
 # example: postgresql://user:password@host:port/database
+sslmode = os.getenv('DB_SSLMODE', 'require')
 db_url = (
     f"{os.getenv('DB_CONNECTION')}://"
     f"{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@"
     f"{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/"
     f"{os.getenv('DB_NAME')}"
+    f"?sslmode={sslmode}"
 )
 
 

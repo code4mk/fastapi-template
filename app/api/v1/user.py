@@ -12,16 +12,10 @@ from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
 from app.services.user_service import UserService
 
 # Create a api router
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 # User service
 user_service = UserService()
-
-
-@router.get("/me")
-async def get_me() -> JSONResponse:
-    """Get the current user."""
-    return JSONResponse(content={"message": "Hello, World!"}, status_code=status.HTTP_200_OK)
 
 
 # Registration route
