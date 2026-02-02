@@ -15,6 +15,8 @@ from app.models.users import User
 from app.schemas.user_schema import UserCreateSchema
 from app.serializers.user_serializer import UserLoginSerializer, UserSerializer
 
+from fastapi_pundra.common.mailer.mail import send_mail_background
+
 from fastapi_pundra.common.raw_sql.utils import (
     raw_sql_fetch_all,
     raw_sql_rest_paginate,
@@ -61,26 +63,13 @@ class UserService:
             "name": new_user.name or new_user.email,
             "activation_link": f"{request.base_url}api/v1/users/activate",
         }
-
-        # from fastapi_pundra.common.mailer.task import send_email_queue_task
-
-        # send_email_queue_task.apply_async(
-        #     kwargs={
-        #         "subject": f"Welcome, {new_user.name or new_user.email}!",
-        #         "to": [new_user.email],
-        #         "template_name": template_name,
-        #         "context": context,
-        #     },
-        #     countdown=20,
-        # )
-
-        # await send_mail_background(
-        #     background_tasks=background_tasks,
-        #     subject=f"Welcome, {new_user.name or new_user.email}!",
-        #     to=[new_user.email],
-        #     template_name=template_name,
-        #     context=context,
-        # )
+        await send_mail_background(
+            background_tasks=background_tasks,
+            subject=f"Welcome, {new_user.name or new_user.email}!",
+            to=[new_user.email],
+            template_name=template_name,
+            context=context,
+        )
 
         return {
             "success": True,

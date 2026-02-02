@@ -3,6 +3,7 @@ from dotenv import load_dotenv
 from fastapi import FastAPI
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi_pundra.rest.global_exception_handler import setup_exception_handlers
+from app.middleware.authorization_middleware import AuthorizationMiddleware
 from app.api.router import router as api_router
 from app.config.cors import CORS_CONFIG
 
@@ -18,7 +19,7 @@ def create_application() -> FastAPI:
     setup_exception_handlers(application)
 
     # Setup authorization middleware
-    # application.add_middleware(AuthorizationMiddleware)
+    application.add_middleware(AuthorizationMiddleware)
 
     # Auto-include all API routes from app.api folder
     application.include_router(api_router)
