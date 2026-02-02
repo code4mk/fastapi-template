@@ -13,7 +13,7 @@ A modern, production-ready FastAPI template with built-in features for rapid dev
 - **Email Templates** - Built-in email templating system
 - **JWT Authentication** - Secure user authentication
 - **Docker** - Containerization support
-- **Celery** - Distributed task queue
+- **TaskIQ** - Distributed task queue
 - **Ruff** - Lightning-fast Python linter and formatter
 
 ## Prerequisites
@@ -53,7 +53,7 @@ cp .env.example .env
 - `DATABASE_URL` - Your database connection string
 - `SECRET_KEY` - JWT secret key for authentication
 - `SMTP_*` - Email configuration for notifications
-- `REDIS_URL` - Redis connection for Celery (if using background tasks)
+- `REDIS_URL` - Redis connection for taskiq
 
 ### 3. Database Setup
 
@@ -86,98 +86,61 @@ The API will be available at:
 ## Directory structure
 
 ```bash
-├── _docs/
-│   ├── celery.md
-│   ├── containerization.md
-│   ├── lint-formatting.md
-│   ├── mailing.md
-│   └── testing.md
-├── alembic/
-│   ├── env.py
-│   ├── README
-│   ├── script.py.mako
-│   └── versions/
-├── app/
-│   ├── api/
+├── _docs/*                         # Documentation files
+├── alembic/*                       # Database migration management
+├── app/                            # Main application directory
+│   ├── api/                        # API routes
 │   │   ├── v1/
+│   │   │   ├── task_schedule_sample.py
 │   │   │   └── user.py
 │   │   ├── health.py
-│   │   └── root_index.py
-│   ├── config/
+│   │   ├── root_index.py
+│   │   └── router.py
+│   ├── config/                     # Application configuration
 │   │   ├── authorization.py
-│   │   ├── cors.py
-│   │   └── scheduler.py
-│   ├── database/
-│   │   └── database.py
-│   ├── middleware/
+│   │   └── cors.py
+│   ├── lib/                        # Library modules
+│   │   ├── database.py
+│   │   └── tskq/*                   # TaskIQ utilities
+│   ├── middleware/                 # Custom middleware
 │   │   └── authorization_middleware.py
-│   ├── models/
+│   ├── models/                     # Database models
 │   │   └── users.py
-│   ├── schemas/
+│   ├── schemas/                    # Pydantic schemas
 │   │   └── user_schema.py
-│   ├── serializers/
+│   ├── serializers/                # Data serializers
 │   │   └── user_serializer.py
-│   ├── services/
+│   ├── services/                   # Business logic services
+│   │   ├── scheduler_service.py
 │   │   └── user_service.py
-│   ├── sql_files/
+│   ├── sql_files/                  # SQL query files
 │   │   └── users/
 │   │       ├── fetch-all-users.sql
 │   │       └── fetch-single-user.sql
 │   ├── tasks/
+│   │   ├── my_schedule_task.py
 │   │   └── my_task.py
-│   ├── templates/
+│   ├── templates/                  # HTML templates
 │   │   ├── mails/
 │   │   │   ├── css/
 │   │   │   │   └── mail.css
 │   │   │   └── welcome_email.html
 │   │   └── user.html
-│   ├── tests/
-│   │   ├── conftest.py
-│   │   ├── factories/
-│   │   │   └── user_factory.py
-│   │   ├── fixtures/
-│   │   │   └── common.py
-│   │   ├── integration/
-│   │   │   ├── test_health.py
-│   │   │   └── test_user.py
-│   │   └── unit/
-│   │       ├── test_user_services.py
-│   │       └── test_users_models.py
-│   ├── utils/
+│   ├── tests/*                       # Test files
+│   ├── utils/                      # Utility functions
 │   │   ├── base.py
 │   │   └── logger.py
-│   ├── celery.py
-│   ├── cli.py
-│   └── main.py
-├── docker/
-│   ├── config/
-│   │   ├── nginx/
-│   │   │   └── app.conf
-│   │   └── supervisor/
-│   │       └── supervisord.conf
-│   └── dockerfiles/
-│       └── app.Dockerfile
-├── fastapi-pundra/
-│   ├── deploy.sh
-│   ├── fastapi_pundra/
-│   │   ├── common/
-│   │   ├── gql_berry/
-│   │   └── rest/
-│   ├── README.md
-│   └── setup.py
-├── logs/
-│   └── app.log
-├── scripts/
-│   ├── deploy.sh
-│   ├── docker_image_build.sh
-│   ├── format.sh
-│   ├── lint.sh
-│   └── test.sh
-├── alembic.ini
-├── pyproject.toml
-├── README.md
-├── ruff.toml
-└── uv.lock
+│   ├── celery.py                   # Celery configuration
+│   ├── cli.py                      # CLI commands
+│   ├── main.py                     # Application entry point
+│   └── taskiq.py                   # TaskIQ configuration
+├── docker/*                         # Docker configuration
+├── scripts/*                       # Utility scripts
+├── alembic.ini                     # Alembic configuration
+├── pyproject.toml                  # Project dependencies and metadata
+├── README.md                       # This file
+├── ruff.toml                       # Ruff linter configuration
+└── uv.lock                         # UV lock file
 ```
 
 > [!NOTE]  
@@ -190,3 +153,6 @@ The API will be available at:
 ## docs
 * [linting and formatting](_docs/lint-formatting.md)
 * [testing](_docs/testing.md)
+* [task scheduler](_docs/task_scheduler.md)
+* [mailing](_docs/mailing.md)
+* [containerization](_docs/containerization.md)
