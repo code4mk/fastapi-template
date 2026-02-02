@@ -69,12 +69,6 @@ cp .env.example .env
 # Configure database URL, secret keys, email settings, etc.
 ```
 
-**Important environment variables to configure:**
-- `DATABASE_URL` - Your database connection string
-- `SECRET_KEY` - JWT secret key for authentication
-- `SMTP_*` - Email configuration for notifications
-- `REDIS_URL` - Redis connection for taskiq
-
 ### 3. Database Setup
 
 This project uses **Alembic** for database schema management and migrations.
@@ -94,7 +88,10 @@ uv run db-revision "Initial database setup"
 Start the development server:
 
 ```bash
-# Start the FastAPI development server
+# Start the FastAPI development server with auto reload
+uv run start-server-dev
+
+# Start the FastAPI server
 uv run start-server
 ```
 
