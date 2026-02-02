@@ -8,7 +8,9 @@ FROM python:${PYTHON_VERSION}
 ENV PYTHONDONTWRITEBYTECODE=1 \
     PYTHONUNBUFFERED=1 \
     PIP_ROOT_USER_ACTION=ignore \
-    DEBIAN_FRONTEND=noninteractive
+    DEBIAN_FRONTEND=noninteractive\
+    UV_NO_SYNC=1
+
 
 # System dependencies
 RUN apt-get update && \
@@ -43,13 +45,16 @@ WORKDIR /var/www/app
 COPY pyproject.toml uv.lock ./
 
 # Install Python dependencies
+RUN uv sync --frozen --no-install-project
+
+# Copy project files (with ownership)
+COPY --chown=appuser:appuser . .
+
+# Install the project in editable mode
 RUN uv sync --frozen
 
 # Change ownership of .venv to appuser
 RUN chown -R appuser:appuser /var/www/app/.venv
-
-# Copy project files (with ownership)
-COPY --chown=appuser:appuser . .
 
 # Switch to non-root user
 USER appuser

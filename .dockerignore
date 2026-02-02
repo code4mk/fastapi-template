@@ -1,141 +1,81 @@
-# ===========================================
-# .dockerignore for FastAPI Template Project
-# ===========================================
-
 # Git
-.git
+.git/
 .gitignore
 .gitattributes
 
-# Docker
-.dockerignore
-Dockerfile*
-docker-compose*
-.docker/
-docker/*
+# Environment files
+.env*
 
-# Python
+# Python cache and build artifacts
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
-.Python
 build/
-develop-eggs/
 dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
 *.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+.eggs/
 
-# Virtual Environment
+# Virtual environments
+.venv/
 venv/
 env/
-ENV/
-.env*
-.venv/
-pyvenv.cfg
 
-# IDE & Editor Files
-.idea/
+# IDE and editor files
 .vscode/
+.idea/
 *.swp
 *.swo
 .DS_Store
-*.sublime-project
-*.sublime-workspace
-.vim/
-.netrwhist
 
-# Testing & Coverage
+# Testing and coverage
 .pytest_cache/
 .coverage
 htmlcov/
 coverage.xml
 .tox/
 .nox/
-.cache
-nosetests.xml
-pytest.ini
-.testmondata
 
-# Logs
-*.log
+# Logs (local development logs)
 logs/
-log/
+*.log
 
-# Database
+# Documentation
+_docs/
+README.md
+*.md
+
+# Development tools and configs
+.pre-commit-config.yaml
+.coveragerc
+ruff.toml
+
+# Scripts (not needed in container)
+scripts/
+
+# Database files (not needed in image)
 *.db
 *.sqlite3
 *.sqlite
-db.sqlite3
 
-# Documentation
-docs/_build/
-_docs/
-*.md
-README*
-CHANGELOG*
-LICENSE*
-CONTRIBUTING*
+# IMPORTANT: Don't ignore SQL query files needed by the application
+!app/sql_files/
+!app/sql_files/**/*.sql
 
-# Configuration & Scripts
-scripts/
-.ruff_cache/
-ruff.toml
-.pre-commit-config.yaml
-.coveragerc
-.env.example
+# Docker files (don't need Dockerfiles inside the image)
+docker/dockerfiles/
+.dockerignore
 
-
-# OS Generated Files
-.DS_Store
-.DS_Store?
-._*
-.Spotlight-V100
-.Trashes
-ehthumbs.db
-Thumbs.db
-
-# Temporary Files
+# Temporary files
 *.tmp
 *.temp
 .tmp/
 .temp/
 
-# Node.js (if any frontend assets)
-node_modules/
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+# OS files
+.DS_Store
+.Trashes
+Thumbs.db
 
-# Backup Files
-*.bak
-*.backup
-*~
-
-# Local Development
-.local/
-.cache/
-
-# FastAPI Specific
-fastapi-pundra/
-fastapi-pundra1/
-
-# Alembic (keep only necessary files)
-alembic/versions/__pycache__/
-alembic/__pycache__/
-
-# Keep only essential files for Docker build
-!app/
-!pyproject.toml
-!docker/config/
+# Ruff cache
+.ruff_cache/
