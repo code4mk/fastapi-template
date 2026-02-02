@@ -5,5 +5,5 @@ omit =
     */migrations/*
     */config/* 
     */middleware/*
-    */celery.py
     */tasks/*
+    */lib/*
