@@ -130,7 +130,6 @@ The API will be available at:
 │   ├── utils/                      # Utility functions
 │   │   ├── base.py
 │   │   └── logger.py
-│   ├── celery.py                   # Celery configuration
 │   ├── cli.py                      # CLI commands
 │   ├── main.py                     # Application entry point
 │   └── taskiq.py                   # TaskIQ configuration
