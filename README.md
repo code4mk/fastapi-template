@@ -7,6 +7,7 @@ A modern, production-ready FastAPI template with built-in features for rapid dev
 ### Core Framework
 - **FastAPI** - Modern, fast web framework for building APIs with automatic OpenAPI documentation
 - **FastAPI Pundra** - Productivity companion for FastAPI development
+- **Auto Route Discovery** - Automatic route discovery and binding from API modules
 
 ### Database & ORM
 - **SQLAlchemy** - Powerful SQL toolkit and Object-Relational Mapping (ORM)
