@@ -7,12 +7,12 @@ from fastapi_pundra.rest.helpers import the_query
 from fastapi_pundra.rest.validation import dto
 from fastapi_pundra.rest.openapi import openapi_request_body_schema
 from sqlalchemy.orm import Session
-from app.database.database import get_db_session
+from app.lib.database import get_db_session
 from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
 from app.services.user_service import UserService
 
 # Create a api router
-router = APIRouter()
+router = APIRouter(prefix="/api/v1")
 
 # User service
 user_service = UserService()

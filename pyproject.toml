@@ -18,7 +18,6 @@ dependencies = [
     "jinja2>=3.1.5",
     "sqlalchemy>=2.0.36",
     "psycopg2-binary>=2.9.10",
-    "fastapi-pundra==0.0.19",
     "fastapi-mail>=1.4.1",
     "loguru>=0.7.3",
     "python-jose>=3.5.0",
@@ -26,6 +25,9 @@ dependencies = [
     "python-multipart>=0.0.20",
     "beautifulsoup4>=4.12.0",
     "premailer>=3.10.0",
+    "taskiq>=0.10.0",
+    "taskiq-redis>=1.1.2",
+    "fastapi-pundra==0.0.21",
 ]
 
 [project.optional-dependencies]
@@ -43,6 +45,7 @@ dev = [
 
 [project.scripts]
 start-server = "app.main:run"
+start-server-dev = "app.main:run_dev"
 db-revision = "app.cli:make_revision"
 db-upgrade = "app.cli:upgrade"
 

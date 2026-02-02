@@ -5,7 +5,7 @@ from sqlalchemy import create_engine, inspect
 from sqlalchemy.orm import sessionmaker
 from dotenv import load_dotenv
 
-from app.database.database import Base, get_db_session
+from app.lib.database import Base, get_db_session
 from app.main import create_application
 
 load_dotenv()
