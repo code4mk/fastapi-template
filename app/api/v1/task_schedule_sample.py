@@ -14,12 +14,14 @@ async def taskiq_process_user_registration() -> JSONResponse:
     """Test endpoint to trigger a TaskIQ task immediately and schedule one for later."""
     try:
         task_result = await invoke_task(
-            process_user_registration, data={"user_id": 1, "email": "test@example.com"}, delay=30
+            process_user_registration,
+            data={"user_id": 1, "email": "process@example.com"},
+            delay=120,
         )
 
         return JSONResponse(
             content={
-                "message": "Task queued immediately and scheduled for 30s later",
+                "message": "Task queued immediately and scheduled for 60s later",
             },
             status_code=status.HTTP_200_OK,
         )
@@ -41,7 +43,7 @@ async def add_schedule_task() -> JSONResponse:
         # Create the scheduled task
         scheduled_task = ScheduledTask(
             task_name="mail_now",  # Use the task_name defined in the @task decorator
-            cron="*/1 * * * *",  # every minute
+            cron="*/2 * * * *",  # every 2 minutes
             labels={"task-type": "schedule"},
             args=[],
             kwargs={},
