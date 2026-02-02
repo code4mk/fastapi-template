@@ -833,15 +833,17 @@ wheels = [
 
 [[package]]
 name = "fastapi-pundra"
-version = "0.0.19"
+version = "0.0.21"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
+    { name = "bcrypt" },
     { name = "python-dotenv" },
+    { name = "python-jose" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/cb/13/c991ba396b131ece50507292ce17f119bc71b99984d478dcf072be6d3728/fastapi_pundra-0.0.19.tar.gz", hash = "sha256:ad5cd30bdd6a7d747347b83ce2a803fea76e284cae50528199ca545b1427af75", size = 24871, upload-time = "2025-11-28T16:17:16.692Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/8c/a8/96cdfbdbf0620d85295615b61018123f127e97405ca4c995517bf0170b3f/fastapi_pundra-0.0.21.tar.gz", hash = "sha256:403a3bb087107d918963a85ff5494453cbaa8d1eba5cf7afbabd4fdaf9ad7a8e", size = 19324, upload-time = "2026-02-02T00:37:26.992Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/af/e7/030c2510329f2c5a905727b71f2834f139e7a46a65bdc45e5d1c508653f6/fastapi_pundra-0.0.19-py3-none-any.whl", hash = "sha256:86037c8460b34c5989b7bbe1f213f2b7ac234093c9a987a1686226fcbff94368", size = 27845, upload-time = "2025-11-28T16:17:15.15Z" },
+    { url = "https://files.pythonhosted.org/packages/ed/bb/1a3c34dba8527e5525b46fc90aa5dea310e3b2d863d8e64f531b2bad6e8b/fastapi_pundra-0.0.21-py3-none-any.whl", hash = "sha256:9dd82623724d941779da3fc15e0c2e68cf53806de0d2d6c44e8bbeaf09867cbe", size = 25878, upload-time = "2026-02-02T00:37:25.053Z" },
 ]
 
 [[package]]
@@ -899,7 +901,7 @@ requires-dist = [
     { name = "faker", marker = "extra == 'dev'", specifier = ">=33.3.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.6" },
     { name = "fastapi-mail", specifier = ">=1.4.1" },
-    { name = "fastapi-pundra", specifier = "==0.0.19" },
+    { name = "fastapi-pundra", specifier = "==0.0.21" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.5" },

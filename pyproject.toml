@@ -27,7 +27,7 @@ dependencies = [
     "premailer>=3.10.0",
     "taskiq>=0.10.0",
     "taskiq-redis>=1.1.2",
-    "fastapi-pundra",
+    "fastapi-pundra==0.0.21",
 ]
 
 [project.optional-dependencies]
@@ -76,11 +76,3 @@ addopts = [
     "--cov-report=term-missing",
     "--cov-report=html",
 ]
-
-[tool.uv.workspace]
-members = [
-    "fastapi-pundra",
-]
-
-[tool.uv.sources]
-fastapi-pundra = { workspace = true, editable = true }
