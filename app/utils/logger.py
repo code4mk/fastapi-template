@@ -35,19 +35,6 @@ logger.add(
     "<level>{message}</level>",
 )
 
-# File handler (no color, with rotation & retention)
-logger.add(
-    "logs/app.log",
-    level="DEBUG",
-    rotation="10 MB",  # Rotate after 10MB
-    retention="10 days",  # Keep for 10 days
-    compression="zip",  # Compress old logs
-    encoding="utf-8",
-    backtrace=True,
-    diagnose=True,
-    format="{time:YYYY-MM-DD HH:mm:ss.SSS} | {level: <8} | {name}:{function}:{line} - {message}",
-)
-
 
 def get_logger() -> LoguruLogger:
     """Return the Loguru logger instance."""
