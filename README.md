@@ -2,19 +2,39 @@
 
 A modern, production-ready FastAPI template with built-in features for rapid development and deployment.
 
-## Features
+## Features & Tech Stack
 
-- **FastAPI** - Modern, fast web framework for building APIs
-- **FastAPI Pundra** - FastAPI Companion for Productivity
-- **SQLAlchemy** - Powerful SQL toolkit and ORM
-- **Alembic** - Database migration management
-- **Pytest** - Comprehensive testing framework
-- **UV** - Ultra-fast Python package manager
-- **Email Templates** - Built-in email templating system
-- **JWT Authentication** - Secure user authentication
-- **Docker** - Containerization support
-- **TaskIQ** - Distributed task queue
+### Core Framework
+- **FastAPI** - Modern, fast web framework for building APIs with automatic OpenAPI documentation
+- **FastAPI Pundra** - Productivity companion for FastAPI development
+
+### Database & ORM
+- **SQLAlchemy** - Powerful SQL toolkit and Object-Relational Mapping (ORM)
+- **Alembic** - Database migration management and version control
+
+### Data Validation & Serialization
+- **Pydantic** - Built-in DTO (Data Transfer Object) with automatic data validation
+- **Schema Layer** - Organized schemas for request/response validation
+- **Custom Serializers** - Flexible data transformation and formatting
+
+### Task Management
+- **TaskIQ** - Distributed task queue for background job processing
+- **Task Scheduling** - Built-in support for scheduled and recurring tasks
+
+### Security & Authentication
+- **JWT Authentication** - Secure token-based user authentication
+- **Authorization Middleware** - Role-based access control
+
+### Development & Tools
+- **UV** - Ultra-fast Python package manager and dependency resolver
+- **Pytest** - Comprehensive testing framework with fixtures and factories
 - **Ruff** - Lightning-fast Python linter and formatter
+- **Docker** - Full containerization support with production-ready configurations
+
+### Additional Features
+- **Email Templates** - Built-in email templating system with HTML/CSS support
+- **SQL File Management** - Organized raw SQL queries for complex operations
+- **Structured Logging** - Built-in logging utilities for debugging and monitoring
 
 ## Prerequisites
 
