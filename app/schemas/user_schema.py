@@ -33,6 +33,5 @@ class UserUpdateSchema(BaseModel):
 class UserLoginSchema(BaseModel):
     """User login schema."""
 
-    id: str
-    name: str
     email: EmailStr
+    password: str

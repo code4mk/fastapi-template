@@ -8,7 +8,7 @@ from fastapi_pundra.rest.validation import dto
 from fastapi_pundra.rest.openapi import openapi_request_body_schema
 from sqlalchemy.orm import Session
 from app.lib.database import get_db_session
-from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
+from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema, UserLoginSchema
 from app.services.user_service import UserService
 
 # Create a api router
@@ -33,7 +33,8 @@ async def registration(
     return JSONResponse(content=output, status_code=status.HTTP_201_CREATED)
 
 
-@router.post("/users/login")
+@router.post("/users/login", openapi_extra={**openapi_request_body_schema(UserLoginSchema)})
+@dto(UserLoginSchema)
 async def login(request: Request, db: Session = Depends(get_db_session)) -> JSONResponse:
     """Login a user."""
     data = await user_service.s_login(request, db)
