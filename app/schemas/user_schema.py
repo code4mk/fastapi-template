@@ -1,4 +1,5 @@
 from pydantic import BaseModel, EmailStr, field_validator
+from fastapi import UploadFile, File
 
 
 # Pydantic model for creating a new user
@@ -35,3 +36,9 @@ class UserLoginSchema(BaseModel):
 
     email: EmailStr
     password: str
+
+
+class UserProfileImageSchema(BaseModel):
+    """User profile image schema."""
+
+    image: UploadFile = File(..., description="The profile image to update (required)")

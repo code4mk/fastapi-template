@@ -58,6 +58,7 @@ ignore = [
     "B008",    # Do not perform function call in argument defaults
     "RET504",
     "F841",  # Unused variable
+    "ARG001",  # Unused argument
 ]
 
 # Allow unused variables when underscore-prefixed
