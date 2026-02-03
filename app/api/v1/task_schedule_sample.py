@@ -6,7 +6,7 @@ from app.services.scheduler_service import get_scheduler_service
 from app.tasks.my_task import process_user_registration
 from app.lib.tskq.task_invoker import invoke_task
 
-router = APIRouter(prefix="/taskiq")
+router = APIRouter(prefix="/taskiq", tags=["Taskiq"])
 
 
 @router.get("/process-user-registration")

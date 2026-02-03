@@ -12,7 +12,7 @@ from app.schemas.user_schema import UserCreateSchema, UserUpdateSchema
 from app.services.user_service import UserService
 
 # Create a api router
-router = APIRouter(prefix="/api/v1")
+router = APIRouter(prefix="/api/v1", tags=["User"])
 
 # User service
 user_service = UserService()
