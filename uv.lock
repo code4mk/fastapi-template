@@ -727,7 +727,7 @@ wheels = [
 
 [[package]]
 name = "fastapi-pundra"
-version = "0.0.21"
+version = "0.0.22"
 source = { registry = "https://pypi.org/simple" }
 dependencies = [
     { name = "bcrypt" },
@@ -735,9 +735,9 @@ dependencies = [
     { name = "python-jose" },
     { name = "requests" },
 ]
-sdist = { url = "https://files.pythonhosted.org/packages/8c/a8/96cdfbdbf0620d85295615b61018123f127e97405ca4c995517bf0170b3f/fastapi_pundra-0.0.21.tar.gz", hash = "sha256:403a3bb087107d918963a85ff5494453cbaa8d1eba5cf7afbabd4fdaf9ad7a8e", size = 19324, upload-time = "2026-02-02T00:37:26.992Z" }
+sdist = { url = "https://files.pythonhosted.org/packages/c7/1a/cdc2f8c0d544f38dca98f5db787d7e36ff550a9507d9f763cf2209d5ef60/fastapi_pundra-0.0.22.tar.gz", hash = "sha256:86a93933b52c537f7ee6c6cb6e694711592e601a062fce890bb3ba70189e8fdd", size = 19888, upload-time = "2026-02-03T10:42:15.468Z" }
 wheels = [
-    { url = "https://files.pythonhosted.org/packages/ed/bb/1a3c34dba8527e5525b46fc90aa5dea310e3b2d863d8e64f531b2bad6e8b/fastapi_pundra-0.0.21-py3-none-any.whl", hash = "sha256:9dd82623724d941779da3fc15e0c2e68cf53806de0d2d6c44e8bbeaf09867cbe", size = 25878, upload-time = "2026-02-02T00:37:25.053Z" },
+    { url = "https://files.pythonhosted.org/packages/f1/23/f306c6c908e8b6883c2221de4d9296bc3e4463630aa21f32e18670d62028/fastapi_pundra-0.0.22-py3-none-any.whl", hash = "sha256:f518e1b0f8deb3df1d54793874b26858548339dd5c24cfee1c4a18f9e7000b6a", size = 26667, upload-time = "2026-02-03T10:42:13.826Z" },
 ]
 
 [[package]]
@@ -790,7 +790,7 @@ requires-dist = [
     { name = "faker", marker = "extra == 'dev'", specifier = ">=33.3.0" },
     { name = "fastapi", extras = ["standard"], specifier = ">=0.115.6" },
     { name = "fastapi-mail", specifier = ">=1.4.1" },
-    { name = "fastapi-pundra", specifier = "==0.0.21" },
+    { name = "fastapi-pundra", specifier = "==0.0.22" },
     { name = "httpx", specifier = ">=0.28.1" },
     { name = "httpx", marker = "extra == 'dev'", specifier = ">=0.28.1" },
     { name = "jinja2", specifier = ">=3.1.5" },
