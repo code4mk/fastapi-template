@@ -45,6 +45,8 @@ start-server = "app.main:run"
 start-server-dev = "app.main:run_dev"
 db-revision = "app.cli:make_revision"
 db-upgrade = "app.cli:upgrade"
+lint = "app.cli:lint"
+pre-commit-install = "app.cli:pre_commit_install"
 
 [build-system]
 requires = ["hatchling"]

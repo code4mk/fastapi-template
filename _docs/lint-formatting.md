@@ -11,9 +11,17 @@ uv sync --extra dev
 
 ## with pre-commit
 
+### install pre-commit
 ```bash
 uv sync --extra dev
-pre-commit install
+uv run pre-commit-install
+```
+
+### uninstall pre-commit
+if you want to uninstall pre-commit, you can run the following command:
+
+```bash
+uv run pre-commit uninstall
 ```
 
 > [!NOTE]  

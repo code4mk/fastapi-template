@@ -73,5 +73,43 @@ def upgrade() -> None:
         sys.exit(1)
 
 
+def lint() -> None:
+    """Run pre-commit hooks on all files."""
+    project_root = Path(__file__).parent.parent
+
+    print("Running pre-commit on all files...")  # noqa: T201
+    try:
+        result = subprocess.run(
+            ["uv", "run", "pre-commit", "run", "--all-files"],  # noqa: S607
+            cwd=project_root,
+            check=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+    except FileNotFoundError:
+        print("ERROR: 'uv' command not found. Please ensure uv is installed.", file=sys.stderr)  # noqa: T201
+        sys.exit(1)
+
+
+def pre_commit_install() -> None:
+    """Install pre-commit hooks into the git repository."""
+    project_root = Path(__file__).parent.parent
+
+    print("Installing pre-commit hooks...")  # noqa: T201
+    try:
+        subprocess.run(
+            ["uv", "run", "pre-commit", "install"],  # noqa: S607
+            cwd=project_root,
+            check=True,
+            text=True,
+        )
+    except subprocess.CalledProcessError:
+        sys.exit(1)
+    except FileNotFoundError:
+        print("ERROR: 'uv' command not found. Please ensure uv is installed.", file=sys.stderr)  # noqa: T201
+        sys.exit(1)
+
+
 if __name__ == "__main__":
     make_revision()
