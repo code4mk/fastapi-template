@@ -10,10 +10,14 @@ def test_health_check(client):
 def test_root_index(client):
     response = client.get("/")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"message": "FastAPI is running..."}
+    data = response.json()
+    assert data["message"] == "FastAPI project is running..."
+    assert "version" in data
 
 
 def test_the_index(client):
     response = client.get("/the-index")
     assert response.status_code == status.HTTP_200_OK
-    assert response.json() == {"message": "FastAPI is running..."}
+    data = response.json()
+    assert data["message"] == "FastAPI project is running..."
+    assert "version" in data

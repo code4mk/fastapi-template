@@ -5,7 +5,7 @@ set -x
 
 
 # Run pytest with coverage
-pytest \
+uv run pytest \
     --cov=app \
     --cov-report=term-missing \
     --cov-report=html \

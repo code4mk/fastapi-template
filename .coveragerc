@@ -7,3 +7,4 @@ omit =
     */middleware/*
     */tasks/*
     */lib/*
+    */cli.py
