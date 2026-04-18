@@ -6,41 +6,50 @@ A modern, production-ready FastAPI template with built-in features for rapid dev
 
 ### Core Framework
 - **FastAPI** - Modern, fast web framework for building APIs with automatic OpenAPI documentation
-- **FastAPI Pundra** - Productivity companion for FastAPI development
-- **Auto Route Discovery** - Automatic route discovery and binding from API modules
+- **FastAPI Pundra** - Productivity companion for FastAPI (global exception handling, OpenAPI schema discovery, `auto_bind_router` for API modules)
+- **Auto Route Discovery** - Routers under `app.api` are discovered and mounted automatically
 
 ### Database & ORM
-- **SQLAlchemy** - Powerful SQL toolkit and Object-Relational Mapping (ORM)
+- **PostgreSQL** - Default target database (connection built from settings; `psycopg2-binary` driver)
+- **SQLAlchemy** - SQL toolkit and ORM
 - **Alembic** - Database migration management and version control
 
-### Data Validation & Serialization
-- **Pydantic** - Built-in DTO (Data Transfer Object) with automatic data validation
-- **Schema Layer** - Organized schemas for request/response validation
-- **Custom Serializers** - Flexible data transformation and formatting
+### Configuration & Validation
+- **Pydantic** - Request/response models and validation
+- **Pydantic Settings** - Typed configuration from environment variables (`app/config/settings.py`)
+- **Schema Layer** - Organized schemas under `app.schemas` with OpenAPI discovery
+- **Custom Serializers** - Flexible data transformation under `app/serializers`
 
 ### Task Management
-- **TaskIQ** - Distributed task queue for background job processing
-- **Task Scheduling** - Built-in support for scheduled and recurring tasks
+- **TaskIQ** - Async task queue for background jobs
+- **taskiq-redis** - Redis broker for TaskIQ
+- **Task Scheduling** - Sample scheduled tasks and scheduler scripts under `scripts/`
 
 ### Security & Authentication
-- **JWT Authentication** - Secure token-based user authentication
-- **Authorization Middleware** - Role-based access control
+- **JWT Authentication** - Bearer tokens via `fastapi-pundra` JWT utilities
+- **Authorization Middleware** - Validates JWT on protected routes; public routes are configured in `EXCLUDE_PATHS` (`app/config/authorization.py`)
+- **Path Rules** - Prefix, segment-wildcard, and exact path matching for public routes (`app/lib/auth_path_utils.py`)
+
+### HTTP & Integrations
+- **HTTPX** - Async-friendly HTTP client; shared helpers in `app/lib/httpx_client.py`
 
 ### Development & Tools
-- **UV** - Ultra-fast Python package manager and dependency resolver
-- **Pytest** - Comprehensive testing framework with fixtures and factories
-- **Ruff** - Lightning-fast Python linter and formatter
-- **Docker** - Full containerization support with production-ready configurations
+- **UV** - Python package manager and lockfile (`uv.lock`)
+- **Pytest** - Tests with `pytest-asyncio`, `pytest-cov`, factories (`factory-boy` / `faker`), and `app/tests/conftest.py`
+- **Ruff** - Linter/formatter (`ruff.toml`; also run via pre-commit)
+- **Pre-commit** - Git hooks (install with `uv run pre-commit-install` or use `uv run lint` to run hooks on all files)
+- **Docker** - Sample app Dockerfile and supervisor config under `docker/`
 
 ### Additional Features
-- **Email Templates** - Built-in email templating system with HTML/CSS support
-- **SQL File Management** - Organized raw SQL queries for complex operations
-- **Structured Logging** - Built-in logging utilities for debugging and monitoring
+- **Email** - `fastapi-mail`, Jinja2 templates, and premailer/inline CSS under `app/templates/mails/`
+- **SQL File Management** - Raw SQL files under `app/sql_files/`
+- **Structured Logging** - **Loguru**-based logging (`app/utils/logger.py`)
 
 ## Prerequisites
 
 - Python 3.12 or higher
-- UV package manager (recommended)
+- [UV](https://github.com/astral-sh/uv) package manager (recommended)
+- **PostgreSQL** (or adjust `db_*` settings in `.env` to match your database)
 
 ## Quick Start
 
@@ -56,7 +65,7 @@ uv sync
 uv sync --extra dev
 ```
 
-> **Note**: The `--extra dev` flag installs additional development tools like testing frameworks, linters, and formatters.
+> **Note**: The `--extra dev` flag installs testing tools, Ruff, pre-commit, and related dev dependencies.
 
 ### 2. Environment Configuration
 
@@ -66,8 +75,8 @@ Create your environment configuration:
 # Copy the example environment file
 cp .env.example .env
 
-# Edit the .env file with your specific configuration
-# Configure database URL, secret keys, email settings, etc.
+# Edit .env: database host/user/password/name, SSL mode, project port, test DB URL, etc.
+# Settings are loaded in app/config/settings.py (Pydantic Settings).
 ```
 
 ### 3. Database Setup
@@ -80,7 +89,7 @@ Initialize and upgrade your database:
 # Run database migrations
 uv run db-upgrade
 
-# create a new database revision
+# Create a new database revision (message in quotes)
 uv run db-revision "Initial database setup"
 ```
 
@@ -89,87 +98,118 @@ uv run db-revision "Initial database setup"
 Start the development server:
 
 ```bash
-# Start the FastAPI development server with auto reload
+# Development: auto-reload (port from settings, default 8000)
 uv run start-server-dev
 
-# Start the FastAPI server
+# Production-style: no reload
 uv run start-server
 ```
 
-The API will be available at:
+The API will be available at (host/port depend on your settings; defaults shown):
+
 - **API**: http://localhost:8000
 - **Interactive Docs**: http://localhost:8000/docs
 - **ReDoc**: http://localhost:8000/redoc
 
-## Directory structure
+### 5. Optional: Git hooks & tests
 
 ```bash
-├── _docs/*                         # Documentation files
-├── alembic/*                       # Database migration management
-├── app/                            # Main application directory
-│   ├── api/                        # API routes
+# Install pre-commit hooks (once per clone)
+uv run pre-commit-install
+
+# Run the full lint pipeline (pre-commit on all files)
+uv run lint
+
+# Tests with coverage (project script enforces coverage thresholds)
+bash scripts/test.sh
+
+# Or run pytest directly (see pyproject.toml for default pytest options)
+uv run pytest
+```
+
+## Project CLI entry points
+
+Defined in `pyproject.toml` under `[project.scripts]`:
+
+| Command | Purpose |
+|--------|---------|
+| `uv run start-server` | Run the app with Uvicorn (no reload) |
+| `uv run start-server-dev` | Run with reload |
+| `uv run db-upgrade` | `alembic upgrade head` |
+| `uv run db-revision "message"` | `alembic revision --autogenerate` |
+| `uv run lint` | Run pre-commit on all files |
+| `uv run pre-commit-install` | `pre-commit install` |
+
+## Directory structure
+
+```text
+├── _docs/                          # Extra documentation (see below)
+├── alembic/                        # Alembic env and migration versions
+├── app/
+│   ├── api/                        # HTTP routes (auto-bound from app.api)
 │   │   ├── v1/
 │   │   │   ├── task_schedule_sample.py
 │   │   │   └── user.py
 │   │   ├── health.py
 │   │   ├── root_index.py
 │   │   └── router.py
-│   ├── config/                     # Application configuration
-│   │   ├── authorization.py
-│   │   └── cors.py
-│   ├── lib/                        # Library modules
-│   │   ├── database.py
-│   │   └── tskq/*                   # TaskIQ utilities
-│   ├── middleware/                 # Custom middleware
+│   ├── config/                     # Settings, CORS, authorization lists
+│   │   ├── authorization.py       # EXCLUDE_PATHS (JWT not required)
+│   │   ├── cors.py
+│   │   └── settings.py            # Pydantic Settings / env
+│   ├── lib/
+│   │   ├── auth_path_utils.py     # Public-path matching for middleware
+│   │   ├── database.py            # Engine, session, Base
+│   │   ├── dot_env_loader.py
+│   │   ├── httpx_client.py
+│   │   └── tskq/                  # TaskIQ broker, scheduler helpers, invoker
+│   ├── middleware/
 │   │   └── authorization_middleware.py
-│   ├── models/                     # Database models
+│   ├── models/
 │   │   └── users.py
-│   ├── schemas/                    # Pydantic schemas
+│   ├── schemas/
 │   │   └── user_schema.py
-│   ├── serializers/                # Data serializers
+│   ├── serializers/
 │   │   └── user_serializer.py
-│   ├── services/                   # Business logic services
+│   ├── services/
 │   │   ├── scheduler_service.py
 │   │   └── user_service.py
-│   ├── sql_files/                  # SQL query files
-│   │   └── users/
-│   │       ├── fetch-all-users.sql
-│   │       └── fetch-single-user.sql
-│   ├── tasks/
-│   │   ├── my_schedule_task.py
-│   │   └── my_task.py
-│   ├── templates/                  # HTML templates
-│   │   ├── mails/
-│   │   │   ├── css/
-│   │   │   │   └── mail.css
-│   │   │   └── welcome_email.html
-│   │   └── user.html
-│   ├── tests/*                       # Test files
-│   ├── utils/                      # Utility functions
+│   ├── sql_files/users/           # Example raw SQL
+│   ├── tasks/                     # TaskIQ task modules
+│   ├── templates/                 # Jinja (e.g. mail HTML)
+│   ├── tests/                     # pytest: unit/, integration/, factories/, fixtures/
+│   ├── utils/
 │   │   ├── base.py
-│   │   └── logger.py
-│   ├── cli.py                      # CLI commands
-│   ├── main.py                     # Application entry point
-│   └── taskiq.py                   # TaskIQ configuration
-├── docker/*                         # Docker configuration
-├── scripts/*                       # Utility scripts
-├── alembic.ini                     # Alembic configuration
-├── pyproject.toml                  # Project dependencies and metadata
-├── README.md                       # This file
-├── ruff.toml                       # Ruff linter configuration
-└── uv.lock                         # UV lock file
+│   │   └── logger.py              # Loguru setup
+│   ├── cli.py                     # db-upgrade, db-revision, lint, pre-commit-install
+│   ├── main.py                    # FastAPI app factory
+│   └── taskiq.py                  # TaskIQ app/broker wiring
+├── docker/
+│   ├── config/supervisor/
+│   └── dockerfiles/
+├── scripts/                       # test.sh, lint.sh, format.sh, taskiq-*.sh, deploy.sh, etc.
+├── .coveragerc
+├── .pre-commit-config.yaml
+├── alembic.ini
+├── pyproject.toml
+├── ruff.toml
+├── uv.lock
+└── README.md
 ```
 
 > [!NOTE]  
-> This project needs python 3.12 or higher
+> This project requires Python 3.12 or higher.
 
-## postman collection documentation
+## Postman collection documentation
 
-* [postman collection documentation](https://documenter.getpostman.com/view/9920489/2sAYQZGBNJ)
+* [Postman collection documentation](https://documenter.getpostman.com/view/9920489/2sAYQZGBNJ)
 
-## docs
-* [linting and formatting](_docs/lint-formatting.md)
-* [testing](_docs/testing.md)
-* [task scheduler](_docs/task_scheduler.md)
-* [mailing](_docs/mailing.md)
-* [containerization](_docs/containerization.md)
+## Docs
+
+* [Linting and formatting](_docs/lint-formatting.md)
+* [Testing](_docs/testing.md)
+* [Authorization & public paths](_docs/authorization.md)
+* [HTTPX client](_docs/httpx-client.md)
+* [Task scheduler](_docs/task_scheduler.md)
+* [Mailing](_docs/mailing.md)
+* [Containerization](_docs/containerization.md)
