@@ -5,15 +5,16 @@ from contextlib import asynccontextmanager
 from fastapi import FastAPI
 from taskiq import AsyncBroker
 
+from app.lib.dot_env_loader import dot_env_loader
 from app.lib.tskq.taskiq_broker import create_broker
-from dotenv import load_dotenv
 from app.lib.tskq.taskiq_helper import discover_and_import_tasks
 from taskiq import TaskiqScheduler
 from taskiq.schedule_sources import LabelScheduleSource
 from app.lib.tskq.redis_schedule_source import RedisScheduleSource
 from taskiq_redis import ListRedisScheduleSource
 
-load_dotenv()
+# Load the .env for local development
+dot_env_loader()
 
 
 def create_taskiq_broker() -> AsyncBroker:

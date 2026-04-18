@@ -1,24 +1,21 @@
-import os
 from collections.abc import Generator
-from dotenv import load_dotenv
 from sqlalchemy import create_engine
 from sqlalchemy.orm import Session, declarative_base, sessionmaker
-
-load_dotenv()
+from app.config.settings import settings
 
 # Get database connection details from environment variables
-DB_CONNECTION = os.getenv("DB_CONNECTION", "postgresql")
-DB_HOST = os.getenv("DB_HOST", "localhost")
-DB_PORT = os.getenv("DB_PORT", "5432")
-DB_USER = os.getenv("DB_USER", "postgres")
-DB_PASSWORD = os.getenv("DB_PASSWORD", "")
-DB_NAME = os.getenv("DB_NAME", "postgres")
-DB_SSLMODE = os.getenv("DB_SSLMODE", "require")
+db_connection = settings.db_connection
+db_host = settings.db_host
+db_port = settings.db_port
+db_user = settings.db_user
+db_password = settings.db_password
+db_name = settings.db_name
+db_sslmode = settings.db_sslmode
 
 # Construct database URL
-# example: postgresql://user:password@host:port/database
+# example: postgresql://user:password@host:port/database?sslmode=prefer
 SQLALCHEMY_DATABASE_URL = (
-    f"{DB_CONNECTION}://{DB_USER}:{DB_PASSWORD}@{DB_HOST}:{DB_PORT}/{DB_NAME}?sslmode={DB_SSLMODE}"
+    f"{db_connection}://{db_user}:{db_password}@{db_host}:{db_port}/{db_name}?sslmode={db_sslmode}"
 )
 
 # Create the SQLAlchemy engine

@@ -4,10 +4,7 @@ import pkgutil
 import sys
 from logging.config import fileConfig
 from pathlib import Path
-
-from dotenv import load_dotenv
 from sqlalchemy import engine_from_config, pool
-
 from alembic import context
 
 # Add the project root directory to the Python path
@@ -16,9 +13,7 @@ sys.path.append(project_root)
 
 # After adding the project root to the Python path, we can import the Base class
 from app.lib.database import Base
-
-# Load environment variables
-load_dotenv()
+from app.config.settings import settings
 
 
 # this is the Alembic Config object, which provides
@@ -27,13 +22,21 @@ config = context.config
 
 # Construct the complete database URL from environment variables
 # example: postgresql://user:password@host:port/database
-sslmode = os.getenv('DB_SSLMODE', 'require')
+# Get database connection details from environment variables
+db_connection = settings.db_connection
+db_host = settings.db_host
+db_port = settings.db_port
+db_user = settings.db_user
+db_password = settings.db_password
+db_name = settings.db_name
+db_sslmode = settings.db_sslmode
+
 db_url = (
-    f"{os.getenv('DB_CONNECTION')}://"
-    f"{os.getenv('DB_USER')}:{os.getenv('DB_PASSWORD')}@"
-    f"{os.getenv('DB_HOST')}:{os.getenv('DB_PORT')}/"
-    f"{os.getenv('DB_NAME')}"
-    f"?sslmode={sslmode}"
+    f"{db_connection}://"
+    f"{db_user}:{db_password}@"
+    f"{db_host}:{db_port}/"
+    f"{db_name}"
+    f"?sslmode={db_sslmode}"
 )
 
 
@@ -86,6 +89,7 @@ def run_migrations_offline() -> None:
         target_metadata=target_metadata,
         literal_binds=True,
         dialect_opts={"paramstyle": "named"},
+        include_schemas=True,
     )
 
     with context.begin_transaction():
@@ -107,7 +111,7 @@ def run_migrations_online() -> None:
     )
 
     with connectable.connect() as connection:
-        context.configure(connection=connection, target_metadata=target_metadata)
+        context.configure(connection=connection, target_metadata=target_metadata, include_schemas=True)
 
         with context.begin_transaction():
             context.run_migrations()

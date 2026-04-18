@@ -8,3 +8,4 @@ omit =
     */tasks/*
     */lib/*
     */cli.py
+    */models/*

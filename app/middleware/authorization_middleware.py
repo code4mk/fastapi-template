@@ -8,6 +8,9 @@ from jose import JWTError
 from starlette.middleware.base import BaseHTTPMiddleware
 
 from app.config.authorization import EXCLUDE_PATHS
+from app.lib.auth_path_utils import excluded_path_checker
+
+_path_skips_auth = excluded_path_checker(EXCLUDE_PATHS)
 
 
 class AuthorizationMiddleware(BaseHTTPMiddleware):
@@ -40,9 +43,8 @@ class AuthorizationMiddleware(BaseHTTPMiddleware):
     ) -> Response:
         """Dispatch the middleware."""
         try:
-            # Skip token verification for certain paths (optional)
-            request_path = request.url.path.rstrip("/")  # Remove trailing slash if present
-            if any(request_path == excluded.rstrip("/") for excluded in EXCLUDE_PATHS):
+            # Skip token verification for configured paths (exact, prefix /*, segment *)
+            if _path_skips_auth(request.url.path):
                 return await call_next(request)
 
             # Verify the token and get payload
