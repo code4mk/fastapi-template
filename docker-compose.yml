@@ -1,0 +1,57 @@
+services:
+  fastapi-template-postgres-db:
+    image: postgres:16.6
+    container_name: fastapi-template-postgres-db
+    restart: unless-stopped
+
+    environment:
+      POSTGRES_USER: pguser
+      POSTGRES_PASSWORD: pgpass
+      POSTGRES_DB: fastapi-template-db
+
+    ports:
+      - "5434:5432"
+
+    volumes:
+      - fastapi-template_postgres_data:/var/lib/postgresql/data
+
+    networks:
+      - fastapi-template-network
+
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U pguser"]
+      interval: 5s
+      timeout: 5s
+      retries: 5
+
+
+  fastapi-template-redis:
+    image: redis:7.2
+    container_name: fastapi-template-redis
+    restart: unless-stopped
+
+    ports:
+      - "6379:6379"
+
+    volumes:
+      - fastapi-template_redis_data:/data
+
+    networks:
+      - fastapi-template-network
+
+    command: ["redis-server", "--appendonly", "yes"]
+
+    healthcheck:
+      test: ["CMD", "redis-cli", "ping"]
+      interval: 5s
+      timeout: 3s
+      retries: 5
+
+
+volumes:
+  fastapi-template_postgres_data:
+  fastapi-template_redis_data:
+
+networks:
+  fastapi-template-network:
+    name: fastapi-template-network
