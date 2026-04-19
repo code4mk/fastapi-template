@@ -1,13 +1,16 @@
 from fastapi import Request, BackgroundTasks
 from fastapi_pundra.common.jwt_utils import create_access_token, create_refresh_token
 from fastapi_pundra.common.password import compare_hashed_password, generate_password_hash
-from fastapi_pundra.rest.helpers import get_serialize_data
 from fastapi_pundra.rest.exceptions import (
-    BaseAPIException,
     ItemNotFoundException,
     UnauthorizedException,
+    ConflictException,
 )
-from fastapi_pundra.rest.helpers import the_query, the_sorting
+from fastapi_pundra.rest.helpers import (
+    extract_request_data,
+    apply_query_sorting,
+    get_serialize_data,
+)
 from fastapi_pundra.rest.paginate import paginate
 from sqlalchemy.orm import Session
 
@@ -43,7 +46,7 @@ class UserService:
         db_user = db.query(User).filter(User.email == data.email).first()
 
         if db_user:
-            raise BaseAPIException(message="Email already registered", status_code=400)
+            raise ConflictException(message="Email already registered")
 
         new_user = User()
         new_user.email = data.email
@@ -83,7 +86,7 @@ class UserService:
 
         # TODO: add logic here if you want to filter users
 
-        query = the_sorting(request, query, default_sort="email")
+        query = apply_query_sorting(request, query, default_sort="email")
 
         def additional_data(data: list) -> dict:
             total_active_users = len([user for user in data if user.status == "active"])
@@ -111,7 +114,7 @@ class UserService:
     async def s_login(self, request: Request, db: Session) -> dict:
         """Login a user."""
         # Get data from request
-        the_data = await the_query(request)
+        the_data = await extract_request_data(request)
         email = the_data.get("email")
         password = the_data.get("password")
 
@@ -157,7 +160,7 @@ class UserService:
 
     async def s_update_user(self, request: Request, db: Session, user_id: str) -> dict:
         """Update a user."""
-        the_data = await the_query(request)
+        the_data = await extract_request_data(request)
         user = db.query(User).filter(User.id == user_id).first()
 
         if not user:

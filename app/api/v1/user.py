@@ -3,7 +3,7 @@ from typing import Any
 from fastapi import APIRouter, Request, status, Depends, BackgroundTasks, UploadFile
 from fastapi.encoders import jsonable_encoder
 from fastapi.responses import JSONResponse
-from fastapi_pundra.rest.helpers import the_query
+from fastapi_pundra.rest.helpers import extract_request_data
 from fastapi_pundra.rest.validation import dto
 from fastapi_pundra.rest.openapi import openapi_request_body_schema
 from sqlalchemy.orm import Session
@@ -31,7 +31,7 @@ async def registration(
 ) -> dict[str, Any]:
     """Register a new user."""
     # Retrieve data from the request
-    request_data = await the_query(request)
+    request_data = await extract_request_data(request)
     data = UserCreateSchema(**request_data)
 
     output = await user_service.s_registration(request, db, data, background_tasks)
@@ -99,7 +99,8 @@ async def update_user_profile_image(
 ) -> JSONResponse:
     """Update a user's profile image."""
     # Retrieve data from the request
-    request_data = await the_query(request)
+
+    request_data = await extract_request_data(request)
     data = UserProfileImageSchema(**request_data)
     profile_image: UploadFile = data.image
 
