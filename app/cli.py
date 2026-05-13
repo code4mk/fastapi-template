@@ -111,5 +111,14 @@ def pre_commit_install() -> None:
         sys.exit(1)
 
 
+def seed() -> None:
+    """Seed the database with development data."""
+    from fastapi_pundra.common.seeder import run_seeders  # noqa: PLC0415
+
+    names = sys.argv[1:] if len(sys.argv) > 1 else None
+    print("Seeding database...")  # noqa: T201
+    run_seeders(names)
+
+
 if __name__ == "__main__":
     make_revision()
